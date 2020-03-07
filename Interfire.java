@@ -1,3 +1,4 @@
+import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -48,6 +49,8 @@ public class Interfire implements KeyListener {
     private ArrayList<EnemyJet> ee = new ArrayList<>();
     
     private ArrayList<EnemyBullet> shots = new ArrayList<>();
+
+    private Game game = new Game();
 
     public void addSound() {
         try {
@@ -109,8 +112,8 @@ public class Interfire implements KeyListener {
 
         for(int ii=0; ii<shots.size(); ii++) {
 
-            if(shots.get(ii).x > xx && shots.get(ii).x < xx + 80 &&
-               shots.get(ii).y > i && shots.get(ii).y < i + 100) {
+            if(shots.get(ii).x > global.xx && shots.get(ii).x < global.xx + 80 &&
+               shots.get(ii).y > global.i && shots.get(ii).y < global.i + 100) {
 
                 shots.remove(shots.get(ii));
                 
@@ -128,31 +131,31 @@ public class Interfire implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-            if(xx-10 < 0) {
+            if(global.xx-10 < 0) {
                 
             } else
-            xx-=10;
+            global.xx-=10;
         }
         if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            if(xx+10 > 1000) {
+            if(global.xx+10 > 1000) {
                 
             } else
-            xx+=10;
+            global.xx+=10;
         }
         if(e.getKeyCode() == KeyEvent.VK_UP) {
-            if(i-10 < 0) {
+            if(global.i-10 < 0) {
                 
             } else
-            i-=10;
+            global.i-=10;
         }
         if(e.getKeyCode() == KeyEvent.VK_DOWN) {
-            if(i+10 > 600) {
+            if(global.i+10 > 600) {
                 
             } else
-            i+=10;
+            global.i+=10;
         }
         if(e.getKeyCode() == KeyEvent.VK_PERIOD) {
-            fire();
+            fire(lasers);
         }
     }
 
@@ -172,7 +175,6 @@ public class Interfire implements KeyListener {
     
         boolean start = true;
         int q = -1;
-        long steps = 0;
 
     public class EnemyJet {
         int x, y;
@@ -186,9 +188,8 @@ public class Interfire implements KeyListener {
             int v = 100 + rand.nextInt(200);
             int w = 1 + rand.nextInt(2);
             int kk = rand.nextInt(10);
-            steps++;
-            System.out.println(steps);
-            if(steps % 20 == 1) {
+            global.steps++;
+            if(global.steps % 20 == 1) {
                 Random rd = new Random();
                 q = rd.nextInt(3);
             }
@@ -196,7 +197,7 @@ public class Interfire implements KeyListener {
                 q = 2;
             }
             if(q == 0) {
-                if(xx > this.x + w*v) {
+                if(global.xx > this.x + w*v) {
                     boolean pass = true;
                     for(int z=0; z<ee.size(); z++) {
                         if(ee.get(z).x > this.x+5 && ee.get(z).x+80 < this.x+5 &&
@@ -207,7 +208,7 @@ public class Interfire implements KeyListener {
                     if(pass)
                         this.x += 5;
                 }
-                else if(xx < this.x + w*v) {
+                else if(global.xx < this.x + w*v) {
                     boolean pass = true;
                     for(int z=0; z<ee.size(); z++) {
                         if(ee.get(z).x > this.x+5 && ee.get(z).x+80 < this.x+5 &&
@@ -220,15 +221,15 @@ public class Interfire implements KeyListener {
                 }
             }
             else if(q == 1) {
-                if(xx + w*v > this.x)
+                if(global.xx + w*v > this.x)
                     this.x += 5;
-                else if(xx + w*v < this.x)
+                else if(global.xx + w*v < this.x)
                     this.x -= 5;
             }
             else if(q == 2) {
-                if(xx > this.x)
+                if(global.xx > this.x)
                     this.x += 3;
-                else if(xx < this.x)
+                else if(global.xx < this.x)
                     this.x -= 3;
                 int kkk = rand.nextInt(10) - rand.nextInt(10);
                 this.x += kkk;
@@ -242,14 +243,18 @@ public class Interfire implements KeyListener {
         }
     }
     
+    private Global global = null;
+    
     public void setGame() {
+        global = Global.getInstance();
+        global.g = p.getGraphics();
         Thread t = new Thread() {
             public void run() {
                 Random rand = new Random();
                 while(true) {
                     if(ee.size() == 0) {
                         Random rrand = new Random();
-                        for(int s = 0; s < 50; s++) {
+                        for(int s = 0; s < 25; s++) {
                             int v = rrand.nextInt(1100);
                             int w = rrand.nextInt(300);
                             EnemyJet ej = new EnemyJet();
@@ -261,7 +266,7 @@ public class Interfire implements KeyListener {
                     }
                     try {
                         j.setTitle("Life: " + life);
-                        for(int s = 0; s<50; s++) {
+                        for(int s = 0; s<25; s++) {
                             int v = rand.nextInt(165);
                             if(v == 0) {
                                 if(s < ee.size())
@@ -275,13 +280,13 @@ public class Interfire implements KeyListener {
                         }
                         if(life == 0)
                             System.exit(0);
-                        moveShots();
-                        moveLasers();
-                        Thread.sleep(30);
+                        game.moveShots(shots);
+                        game.moveLasers(lasers);
+                        Thread.sleep(0);
                     } catch(Exception e) {
                         e.printStackTrace();
                     }
-                    for(int s = 0; s<50; s++) {
+                    for(int s = 0; s<25; s++) {
                         try {
                             if(ee.size() != s)
                                 ee.get(s).move();
@@ -290,95 +295,24 @@ public class Interfire implements KeyListener {
                         }
                     }
                     drawField();
-                    drawHeroJet();
+                    game.drawHeroJet(heroImg);
                     drawEnemyJet();
-                    drawShots();
-                    drawLasers();
+                    game.drawShots(shots, enemyBulletImg);
+                    game.drawLasers(lasers, bulletImg);
                 }
             }
         };
         t.start();
     }
-    
-    public int xx = 550;
-    public int i = 600;
-    
-    public int y = 0;
 
-    Random rand = new Random();
-    public void fire() {
+
+    public void fire(ArrayList<Bullet> lasers) {
         Bullet b = new Bullet(lasers);
-        b.x = xx + 27;
-        b.y = i - 10;
+        b.x = global.xx + 27;
+        b.y = global.i - 10;
         lasers.add(b);
     }
 
-    public void moveLasers() {
-        for(int i=0; i<lasers.size(); i++) {
-            lasers.get(i).move();
-        }
-    }
-
-    public void moveShots() {
-        for(int i=0; i<shots.size(); i++) {
-            shots.get(i).move();
-        }
-    }
-    
-    public void drawLasers() {
-        for(int i=0; i<lasers.size(); i++) {
-            drawLaser(lasers.get(i));
-        }
-    }
-
-    public void drawShots() {
-        for(int i=0; i<shots.size(); i++) {
-            drawShot(shots.get(i));
-        }
-    }
-
-    public void drawLaser(Bullet b) {
-        if(g == null) {
-            g = p.getGraphics();
-        }
-        if(bulletImg == null) {
-            try {
-                bulletImg = ImageIO.read(getClass().getResourceAsStream("laser.png"));
-            } catch(Exception e) {
-                e.printStackTrace();
-            }
-        }
-        g.drawImage(bulletImg, b.x, b.y, 25, 12, null);
-    }
-    
-    public void drawShot(EnemyBullet eb) {
-        if(g == null) {
-            g = p.getGraphics();
-        }
-        if(enemyBulletImg == null) {
-            try {
-                enemyBulletImg = ImageIO.read(getClass().getResourceAsStream("bullet.png"));
-            } catch(Exception e) {
-                e.printStackTrace();
-            }
-        }
-        g.drawImage(enemyBulletImg, eb.x, eb.y, 25, 25, null);
-    }
-
-    public void drawHeroJet() {
-        if(g == null) {
-            g = p.getGraphics();
-        }
-        if(heroImg == null) {
-            try {
-                heroImg = ImageIO.read(getClass().getResourceAsStream("hero.png"));
-            } catch(Exception e) {
-                e.printStackTrace();
-            }
-        }
-        g.drawImage(heroImg, xx, i, 80, 100, null);
-    }
-    
     public void drawField() {
         if(g == null) {
             g = p.getGraphics();
@@ -405,11 +339,11 @@ public class Interfire implements KeyListener {
         }
         
 
-        g.drawImage(fieldImg2, 0, y - 760, 1100, 760, null);
-        g.drawImage(fieldImg1, 0, y, 1100, 760, null);
-        y+=5;
-        if(y == 760) {
-            y = 0;
+        g.drawImage(fieldImg2, 0, global.y - 760, 1100, 760, null);
+        g.drawImage(fieldImg1, 0, global.y, 1100, 760, null);
+        global.y+=5;
+        if(global.y == 760) {
+            global.y = 0;
         }
     }
     
@@ -423,6 +357,8 @@ public class Interfire implements KeyListener {
         }
         return img;
     }
+    
+    Random rand = new Random();
 
     public void drawEnemyJet() {
         if(g == null) {
@@ -430,7 +366,7 @@ public class Interfire implements KeyListener {
         }
         if(enemyImg == null) {
             try {
-                for(int s = 0; s<50; s++) {
+                for(int s = 0; s<25; s++) {
                     int v = 100 + rand.nextInt(30);
                     int w = 1 + rand.nextInt(30);
                     ee.get(s).x = w*v;
@@ -448,17 +384,17 @@ public class Interfire implements KeyListener {
             try {
                 if(ee.size() != 0)
                     enemyImg = ImageIO.read(getClass().getResourceAsStream("enemy3.png"));
-                else if(steps == 0)
+                else if(global.steps == 0)
                     enemyImg = ImageIO.read(getClass().getResourceAsStream("enemy.png"));
-                else if(steps == 1)
+                else if(global.steps == 1)
                     enemyImg = ImageIO.read(getClass().getResourceAsStream("enemy2.png"));
 
-                steps++;
+                global.steps++;
             } catch(Exception e) {
                 e.printStackTrace();
             }
         }
-        for(int s = 0; s<50; s++) {
+        for(int s = 0; s<25; s++) {
             if(s < ee.size())
                 g.drawImage(enemyImg, ee.get(s).x, ee.get(s).y, 80, 100, null);
         }
@@ -485,5 +421,4 @@ public class Interfire implements KeyListener {
         // TODO code application logic here
         new Interfire();
     }
-    
 }
