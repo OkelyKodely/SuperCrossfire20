@@ -1,4 +1,5 @@
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
@@ -52,14 +53,8 @@ public class Game {
         if(global.g == null) {
             global.g = global.p.getGraphics();
         }
-        if(bulletImg == null) {
-            try {
-                bulletImg = ImageIO.read(getClass().getResourceAsStream("laser.png"));
-            } catch(Exception e) {
-                e.printStackTrace();
-            }
-        }
-        global.g.drawImage(bulletImg, b.x, b.y, 25, 12, null);
+        global.g.setColor(Color.blue);
+        global.g.drawOval(b.x, b.y, 8, 8);
     }
     
     public void drawShot(BufferedImage enemyBulletImg, EnemyBullet eb) {
@@ -87,6 +82,6 @@ public class Game {
                 e.printStackTrace();
             }
         }
-        global.g.drawImage(heroImg, global.xx, global.i, 80, 100, null);
+        global.g.drawImage(heroImg, global.xx, global.i, 80, 80, null);
     }
 }

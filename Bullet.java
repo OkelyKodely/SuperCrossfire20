@@ -14,12 +14,13 @@ import java.util.ArrayList;
 
 public class Bullet {
     int x, y;
+    int powerUpRedMove = 0;
     ArrayList<Bullet> lasers = null;
     public Bullet(ArrayList<Bullet> lasers) {
         this.lasers = lasers;
     }
     public void move() {
-        y-=10;
+        y-=30;
         if(x < 0 || x > 1100 || y < 0 || y > 660)
             this.lasers.remove(this);
     }
