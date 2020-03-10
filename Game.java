@@ -23,7 +23,7 @@ public class Game {
 
     Random rand = new Random();
     
-    Global global = Global.getInstance();
+    Globals globals = Globals.getInstance();
 
     public void moveLasers(ArrayList<Bullet> lasers) {
         for(int i=0; i<lasers.size(); i++) {
@@ -50,16 +50,16 @@ public class Game {
     }
 
     public void drawLaser(BufferedImage bulletImg, Bullet b) {
-        if(global.g == null) {
-            global.g = global.p.getGraphics();
+        if(globals.g == null) {
+            globals.g = globals.p.getGraphics();
         }
-        global.g.setColor(Color.blue);
-        global.g.drawOval(b.x, b.y, 8, 8);
+        globals.g.setColor(Color.blue);
+        globals.g.drawOval(b.x, b.y, 8, 8);
     }
     
     public void drawShot(BufferedImage enemyBulletImg, EnemyBullet eb) {
-        if(global.g == null) {
-            global.g = global.p.getGraphics();
+        if(globals.g == null) {
+            globals.g = globals.p.getGraphics();
         }
         if(enemyBulletImg == null) {
             try {
@@ -68,12 +68,12 @@ public class Game {
                 e.printStackTrace();
             }
         }
-        global.g.drawImage(enemyBulletImg, eb.x, eb.y, 25, 25, null);
+        globals.g.drawImage(enemyBulletImg, eb.x, eb.y, 25, 25, null);
     }
 
     public void drawHeroJet(BufferedImage heroImg) {
-        if(global.g == null) {
-            global.g = global.p.getGraphics();
+        if(globals.g == null) {
+            globals.g = globals.p.getGraphics();
         }
         if(heroImg == null) {
             try {
@@ -82,6 +82,6 @@ public class Game {
                 e.printStackTrace();
             }
         }
-        global.g.drawImage(heroImg, global.xx, global.i, 80, 80, null);
+        globals.g.drawImage(heroImg, globals.xx, globals.i, 80, 80, null);
     }
 }

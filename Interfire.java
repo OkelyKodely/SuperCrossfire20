@@ -39,7 +39,7 @@ public class Interfire implements KeyListener {
 
     private int q = -1;
 
-    private Global global = null;
+    private Globals globals = null;
     
     private int steeps = 0;
     
@@ -203,8 +203,8 @@ public class Interfire implements KeyListener {
     }
     
     private boolean ateRedPowerUp() {
-        if(global.xx+40 > pu.x && global.xx+40 < pu.x + 25 &&
-           global.i+50 > pu.y && global.i+50 < pu.y + 25) {
+        if(globals.xx+40 > pu.x && globals.xx+40 < pu.x + 25 &&
+           globals.i+50 > pu.y && globals.i+50 < pu.y + 25) {
             powerUp ++;
             if(!powerUpKind.equals("red")) {
                 powerUpKind = "red";
@@ -336,8 +336,8 @@ public class Interfire implements KeyListener {
 
         for(int ii=0; ii<shots.size(); ii++) {
 
-            if(shots.get(ii).x > global.xx && shots.get(ii).x < global.xx + 80 &&
-               shots.get(ii).y > global.i && shots.get(ii).y < global.i + 100) {
+            if(shots.get(ii).x > globals.xx && shots.get(ii).x < globals.xx + 80 &&
+               shots.get(ii).y > globals.i && shots.get(ii).y < globals.i + 100) {
 
                 shots.remove(shots.get(ii));
                 
@@ -352,8 +352,8 @@ public class Interfire implements KeyListener {
 
         for(int ii=0; ii<tk2bullets.size(); ii++) {
 
-            if(tk2bullets.get(ii).x > global.xx && tk2bullets.get(ii).x < global.xx + 80 &&
-               tk2bullets.get(ii).y > global.i && tk2bullets.get(ii).y < global.i + 100) {
+            if(tk2bullets.get(ii).x > globals.xx && tk2bullets.get(ii).x < globals.xx + 80 &&
+               tk2bullets.get(ii).y > globals.i && tk2bullets.get(ii).y < globals.i + 100) {
 
                 tk2bullets.remove(tk2bullets.get(ii));
                 
@@ -371,28 +371,28 @@ public class Interfire implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-            if(global.xx-10 < 0) {
+            if(globals.xx-10 < 0) {
                 
             } else
-            global.xx-=10;
+            globals.xx-=10;
         }
         if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            if(global.xx+10 > 1000) {
+            if(globals.xx+10 > 1000) {
                 
             } else
-            global.xx+=10;
+            globals.xx+=10;
         }
         if(e.getKeyCode() == KeyEvent.VK_UP) {
-            if(global.i-10 < 0) {
+            if(globals.i-10 < 0) {
                 
             } else
-            global.i-=10;
+            globals.i-=10;
         }
         if(e.getKeyCode() == KeyEvent.VK_DOWN) {
-            if(global.i+10 > 600) {
+            if(globals.i+10 > 600) {
                 
             } else
-            global.i+=10;
+            globals.i+=10;
         }
         if(e.getKeyCode() == KeyEvent.VK_PERIOD) {
             fire(lasers);
@@ -457,8 +457,8 @@ public class Interfire implements KeyListener {
             int v = 100 + rand.nextInt(200);
             int w = 1 + rand.nextInt(2);
             int kk = rand.nextInt(10);
-            global.steps++;
-            if(global.steps % 20 == 1) {
+            globals.steps++;
+            if(globals.steps % 20 == 1) {
                 Random rd = new Random();
                 q = rd.nextInt(3);
             }
@@ -466,7 +466,7 @@ public class Interfire implements KeyListener {
                 q = 2;
             }
             if(q == 0) {
-                if(global.xx > this.x + w*v) {
+                if(globals.xx > this.x + w*v) {
                     boolean pass = true;
                     for(int z=0; z<ee.size(); z++) {
                         if(ee.get(z).x > this.x+5 && ee.get(z).x+80 < this.x+5 &&
@@ -477,7 +477,7 @@ public class Interfire implements KeyListener {
                     if(pass)
                         this.x += 5;
                 }
-                else if(global.xx < this.x + w*v) {
+                else if(globals.xx < this.x + w*v) {
                     boolean pass = true;
                     for(int z=0; z<ee.size(); z++) {
                         if(ee.get(z).x > this.x+5 && ee.get(z).x+80 < this.x+5 &&
@@ -490,15 +490,15 @@ public class Interfire implements KeyListener {
                 }
             }
             else if(q == 1) {
-                if(global.xx + w*v > this.x)
+                if(globals.xx + w*v > this.x)
                     this.x += 5;
-                else if(global.xx + w*v < this.x)
+                else if(globals.xx + w*v < this.x)
                     this.x -= 5;
             }
             else if(q == 2) {
-                if(global.xx > this.x)
+                if(globals.xx > this.x)
                     this.x += 3;
-                else if(global.xx < this.x)
+                else if(globals.xx < this.x)
                     this.x -= 3;
                 int kkk = rand.nextInt(10) - rand.nextInt(10);
                 this.x += kkk;
@@ -544,8 +544,8 @@ public class Interfire implements KeyListener {
     }
     
     public void setGame() {
-        global = Global.getInstance();
-        global.g = p.getGraphics();
+        globals = Globals.getInstance();
+        globals.g = p.getGraphics();
         Thread t = new Thread() {
             public void run() {
                 boolean ll2 = false;
@@ -826,8 +826,8 @@ public class Interfire implements KeyListener {
 
     public void fire(ArrayList<Bullet> lasers) {
         Bullet b = new Bullet(lasers);
-        b.x = global.xx + 27;
-        b.y = global.i - 10;
+        b.x = globals.xx + 27;
+        b.y = globals.i - 10;
         if((powerUp == 0 || powerUp == 1) && powerUpKind.equals("red")) {
             lasers.add(b);
         }
@@ -837,49 +837,49 @@ public class Interfire implements KeyListener {
             if(powerUp == 2) {
 
                 b = new Bullet(lasers);
-                b.x = global.xx + 31;
-                b.y = global.i - 10;
+                b.x = globals.xx + 31;
+                b.y = globals.i - 10;
                 lasers.add(b);
 
                 b = new Bullet(lasers);
-                b.x = global.xx + 21;
-                b.y = global.i - 10;
+                b.x = globals.xx + 21;
+                b.y = globals.i - 10;
                 b.powerUpRedMove = -3;
                 lasers.add(b);
 
                 b = new Bullet(lasers);
-                b.x = global.xx + 41;
-                b.y = global.i - 10;
+                b.x = globals.xx + 41;
+                b.y = globals.i - 10;
                 b.powerUpRedMove = -3;
                 lasers.add(b);
             } else {
                 
                 b = new Bullet(lasers);
-                b.x = global.xx + 11;
-                b.y = global.i - 10;
+                b.x = globals.xx + 11;
+                b.y = globals.i - 10;
                 b.powerUpRedMove = -3;
                 lasers.add(b);
 
                 b = new Bullet(lasers);
-                b.x = global.xx + 31;
-                b.y = global.i - 10;
+                b.x = globals.xx + 31;
+                b.y = globals.i - 10;
                 lasers.add(b);
 
                 b = new Bullet(lasers);
-                b.x = global.xx + 21;
-                b.y = global.i - 10;
+                b.x = globals.xx + 21;
+                b.y = globals.i - 10;
                 b.powerUpRedMove = -3;
                 lasers.add(b);
 
                 b = new Bullet(lasers);
-                b.x = global.xx + 41;
-                b.y = global.i - 10;
+                b.x = globals.xx + 41;
+                b.y = globals.i - 10;
                 b.powerUpRedMove = -3;
                 lasers.add(b);
                 
                 b = new Bullet(lasers);
-                b.x = global.xx + 51;
-                b.y = global.i - 10;
+                b.x = globals.xx + 51;
+                b.y = globals.i - 10;
                 b.powerUpRedMove = -3;
                 lasers.add(b);
             }
@@ -918,20 +918,20 @@ public class Interfire implements KeyListener {
             }
         }
         
-        global.y+=2;
+        globals.y+=2;
 
-        if(global.y < 760) {
-            g.drawImage(fieldImg3, 0, global.y - 760 - 760, 1100, 760, null);
-            g.drawImage(fieldImg2, 0, global.y - 760, 1100, 760, null);
-            g.drawImage(fieldImg1, 0, global.y, 1100, 760, null);
+        if(globals.y < 760) {
+            g.drawImage(fieldImg3, 0, globals.y - 760 - 760, 1100, 760, null);
+            g.drawImage(fieldImg2, 0, globals.y - 760, 1100, 760, null);
+            g.drawImage(fieldImg1, 0, globals.y, 1100, 760, null);
         }
-        else if(global.y >= 760 && global.y < 1520) {
-            g.drawImage(fieldImg1, 0, global.y - 760 - 760 - 760, 1100, 760, null);
-            g.drawImage(fieldImg3, 0, global.y - 760 - 760, 1100, 760, null);
-            g.drawImage(fieldImg2, 0, global.y - 760, 1100, 760, null);
+        else if(globals.y >= 760 && globals.y < 1520) {
+            g.drawImage(fieldImg1, 0, globals.y - 760 - 760 - 760, 1100, 760, null);
+            g.drawImage(fieldImg3, 0, globals.y - 760 - 760, 1100, 760, null);
+            g.drawImage(fieldImg2, 0, globals.y - 760, 1100, 760, null);
         }
-        else if(global.y >= 1520) {
-            global.y = 0;
+        else if(globals.y >= 1520) {
+            globals.y = 0;
         }
     }
     
@@ -970,7 +970,7 @@ public class Interfire implements KeyListener {
             try {
                 enemyImg = ImageIO.read(getClass().getResourceAsStream("flattank.png"));
 
-                global.steps++;
+                globals.steps++;
             } catch(Exception e) {
                 
             }
