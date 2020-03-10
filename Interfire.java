@@ -191,6 +191,24 @@ public class Interfire implements KeyListener {
         }
     }
     
+    public void greatYouKilledEmAll() {
+        try {
+            File audioFile = new File("speech.wav");
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
+            
+            AudioFormat format = audioStream.getFormat();
+            
+            DataLine.Info info = new DataLine.Info(Clip.class, format);
+            Clip audioClip = (Clip) AudioSystem.getLine(info);
+            
+            audioClip.open(audioStream);
+            audioClip.start();
+            audioStream.close();
+        } catch (Exception e) {
+            
+        }
+    }
+
     class RedPowerUp {
         int x, y;
         private void draw() {
@@ -571,6 +589,7 @@ public class Interfire implements KeyListener {
                                 ej.y = w;
                                 ee.add(ej);
                             }
+                            greatYouKilledEmAll();
                             life+=2;
                         }
                         else if(notk) {
@@ -613,6 +632,7 @@ public class Interfire implements KeyListener {
                             ej.x = v;
                             ej.y = w;
                             ft.add(ej);
+                            greatYouKilledEmAll();
                         }
                     }
                     if(bs1 == null && totank == 2) {
