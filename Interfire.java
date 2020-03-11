@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -207,6 +208,28 @@ public class Interfire implements KeyListener {
         } catch (Exception e) {
             
         }
+        Thread t = new Thread() {
+            public void run() {
+                if(globals.g == null) {
+                    globals.g = globals.p.getGraphics();
+                }
+                globals.g.setColor(Color.WHITE);
+                globals.g.setFont(new Font("arial",Font.BOLD,40));
+                Thread a = new Thread() {
+                    public void run() {
+                        int c = 0;
+                        while(true) {
+                            globals.g.drawString("You killed 'em all.  Great!", 200, 400);
+                            c++;
+                            if(c > 100)
+                                break;
+                        }
+                    }
+                };
+                a.start();
+            }
+        };
+        t.start();
     }
 
     class RedPowerUp {
@@ -623,18 +646,6 @@ public class Interfire implements KeyListener {
                             }
                         }
                     }
-                    if(ft.size() == 0 && totank >= 1) {
-                        Random rrand = new Random();
-                        for(int s = 0; s < 25; s++) {
-                            int v = rrand.nextInt(1100);
-                            int w = -300 + rrand.nextInt(300);
-                            FlatTank ej = new FlatTank();
-                            ej.x = v;
-                            ej.y = w;
-                            ft.add(ej);
-                            greatYouKilledEmAll();
-                        }
-                    }
                     if(bs1 == null && totank == 2) {
                         bs1 = new Boss1();
                         bs1.x = 300;
@@ -783,6 +794,18 @@ public class Interfire implements KeyListener {
                     }
                     moveFtShots(tk2bullets);
                     drawField();
+                    if(ft.size() == 0 && totank >= 1) {
+                        Random rrand = new Random();
+                        for(int s = 0; s < 25; s++) {
+                            int v = rrand.nextInt(1100);
+                            int w = -300 + rrand.nextInt(300);
+                            FlatTank ej = new FlatTank();
+                            ej.x = v;
+                            ej.y = w;
+                            ft.add(ej);
+                            greatYouKilledEmAll();
+                        }
+                    }
                     if(bs1 != null) {
                         Random rrr = new Random();
                         int v = rrr.nextInt(16);
@@ -1101,7 +1124,11 @@ public class Interfire implements KeyListener {
         }
         if(boss1Img == null) {
             try {
-                boss1Img = ImageIO.read(getClass().getResourceAsStream("boss1.png"));
+                int v = rand.nextInt(2);
+                if(v == 0)
+                    boss1Img = ImageIO.read(getClass().getResourceAsStream("boss1b.png"));
+                else
+                    boss1Img = ImageIO.read(getClass().getResourceAsStream("boss1.png"));
             } catch(Exception e) {
                 
             }
