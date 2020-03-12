@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.AffineTransform;
@@ -20,6 +21,7 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class Interfire implements KeyListener {
@@ -32,7 +34,7 @@ public class Interfire implements KeyListener {
     
     private Boss1 bs1 = null;
     
-    private BufferedImage flatTankImg = null;
+    private Image flatTankImg = null;
     
     private BufferedImage tankImg2 = null;
     
@@ -90,7 +92,7 @@ public class Interfire implements KeyListener {
 
     private BufferedImage heroImg = null;
     
-    private BufferedImage enemyImg = null;
+    private Image enemyImg = null;
     
     private BufferedImage fieldImg1 = null;
 
@@ -117,6 +119,43 @@ public class Interfire implements KeyListener {
     private String powerUpKind = "red";
     
     public Interfire() {
+
+        JFrame jj = new JFrame();
+        jj.setLayout(null);
+        jj.setBounds(100, 100, 500, 400);
+        jj.setVisible(true);
+        jj.setBackground(Color.yellow);
+        Graphics g = null;
+        if(g == null) {
+            g = jj.getGraphics();
+        }
+        BufferedImage boss1Img = null;
+        if(boss1Img == null) {
+            try {
+                boss1Img = ImageIO.read(getClass().getResourceAsStream("boss1b.png"));
+            } catch(Exception e) {
+                
+            }
+        }
+        g.drawImage(boss1Img, 50, 50, 350, 200, null);
+        g.drawString("Interfire", 400, 210);
+        g.drawString("Move: Arrow Buttons      Fire: Period Button", 10, 310);
+        g.drawString("DON'T GET HIT BY THE ENEMY FIRE!", 10, 370);
+        BufferedImage img = null;
+        if(img == null) {
+            try {
+                img = ImageIO.read(getClass().getResourceAsStream("hero.png"));
+            } catch(Exception e) {
+                
+            }
+        }
+        g.drawImage(img, 250, 250, 100, 100, null);
+        try {
+            Thread.sleep(10000);
+            jj.dispose();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
 
         addSound();
 
@@ -331,6 +370,20 @@ public class Interfire implements KeyListener {
         }
     }
     
+    private void checkForBoss2Shot() {
+        for(int ii=0; ii<lasers.size(); ii++) {
+            if(lasers.get(ii).x > bs2.x && lasers.get(ii).x < bs2.x + 350 &&
+               lasers.get(ii).y > bs2.y && lasers.get(ii).y < bs2.y + 200) {
+
+                lasers.remove(lasers.get(ii));
+                
+                bs2.life --;
+
+                points += 231;
+            }
+        }
+    }
+
     private void checkForFtShot() {
 
         try {
@@ -451,6 +504,13 @@ public class Interfire implements KeyListener {
         }
     }
     
+    class Boss2Bullet {
+        int x, y;
+        private void move() {
+            y+=5;
+        }
+    }
+
     public void moveFtShots(ArrayList<Boss1Bullet> tk2bullets) {
         for(int i=0; i<tk2bullets.size(); i++) {
             tk2bullets.get(i).move();
@@ -584,6 +644,8 @@ public class Interfire implements KeyListener {
         }
     }
     
+    boolean bs1went = false;
+    
     public void setGame() {
         globals = Globals.getInstance();
         globals.g = p.getGraphics();
@@ -646,13 +708,25 @@ public class Interfire implements KeyListener {
                             }
                         }
                     }
-                    if(bs1 == null && totank == 2) {
+                    if(bs1 == null && totank == 3) {
                         bs1 = new Boss1();
                         bs1.x = 300;
                         bs1.y = 150;
-                        totank = 111111;
                         
                     }
+                    if(bs2 == null && (totank == 6 || totank == 8 || totank == 10 || totank == 12 || totank == 14)) {
+                        bs2 = new Boss2();
+                        bs2.x = 300;
+                        bs2.y = 150;
+                        
+                    }
+                    if(bs2 == null && totank == 8) {
+                        bs2 = new Boss2();
+                        bs2.x = 500;
+                        bs2.y = 250;
+                        
+                    }
+                    
                     if(bs1 == null) {
                         System.out.println("totank:" + totank);
                     }
@@ -671,7 +745,8 @@ public class Interfire implements KeyListener {
                         }
                     }
                     try {
-                        j.setTitle("Points: " + points + ", Life: " + life);
+                        //j.setTitle("Points: " + points + ", Life: " + life);
+                        j.setTitle("totank: " + totank);
                         for(int s = 0; s<25; s++) {
                             int v = rand.nextInt(165);
                             if(v == 0) {
@@ -695,14 +770,25 @@ public class Interfire implements KeyListener {
                                 tk.life = 0;
                                 tk = null;
                                 ll1 = true;
+                                bs1went = true;
                             }
                         }
                         
+                        if(bs2 != null) {
+                            if(bs2.life <= 0) {
+                                bs2.life = 0;
+                                bs2 = null;
+                                if (totank == 14) {
+                                    JOptionPane.showMessageDialog(null, "You killed 'em all. so you won!");
+                                    System.exit(0);
+                                }
+                            }
+                        }
+
                         if(bs1 != null) {
                             if(bs1.life <= 0) {
                                 bs1.life = 0;
                                 bs1 = null;
-                                totank = 0;
                             }
                         }
 
@@ -711,6 +797,7 @@ public class Interfire implements KeyListener {
                                 tk2.life = 0;
                                 tk2 = null;
                                 ll2 = true;
+                                bs1went = true;
                             }
                         }
                         
@@ -735,6 +822,8 @@ public class Interfire implements KeyListener {
                             checkForTankShot();
                         if(bs1 != null)
                             checkForBoss1Shot();
+                        if(bs2 != null)
+                            checkForBoss2Shot();
                         checkForFtShot();
                         checkForEnemyShot();
                         checkForEnemyShotShot();
@@ -794,7 +883,7 @@ public class Interfire implements KeyListener {
                     }
                     moveFtShots(tk2bullets);
                     drawField();
-                    if(ft.size() == 0 && totank >= 1) {
+                    if(ft.size() == 0 && totank >= 1 && bs1 == null && bs2 == null) {
                         Random rrand = new Random();
                         for(int s = 0; s < 25; s++) {
                             int v = rrand.nextInt(1100);
@@ -805,16 +894,27 @@ public class Interfire implements KeyListener {
                             ft.add(ej);
                             greatYouKilledEmAll();
                         }
+                        totank ++;
                     }
                     if(bs1 != null) {
                         Random rrr = new Random();
-                        int v = rrr.nextInt(16);
+                        int v = rrr.nextInt(42);
                         if(v == 0) {
                             bs1.shoot();
                         }
                         drawBoss1();
                         drawBoss1Bullets();
                         moveBoss1Bullets();
+                    }
+                    if(bs2 != null) {
+                        Random rrr = new Random();
+                        int v = rrr.nextInt(16);
+                        if(v == 0) {
+                            bs2.shoot();
+                        }
+                        drawBoss2();
+                        drawBoss2Bullets();
+                        moveBoss2Bullets();
                     }
                     drawTank2Bullets();
                     drawFlatTank();
@@ -849,6 +949,14 @@ public class Interfire implements KeyListener {
         }
     }
     
+    ArrayList<Boss2Bullet> bs2bullets = new ArrayList<>();
+    
+    private void moveBoss2Bullets() {
+        for(int s = 0; s<bs2bullets.size(); s++) {
+            bs2bullets.get(s).move();
+        }
+    }
+
     private void moveBoss1Bullets() {
         for(int s = 0; s<bs1bullets.size(); s++) {
             bs1bullets.get(s).move();
@@ -861,6 +969,12 @@ public class Interfire implements KeyListener {
         }
     }
     
+    private void drawBoss2Bullets() {
+        for(int s = 0; s<bs2bullets.size(); s++) {
+            drawBoss2Bullet(bs2bullets.get(s));
+        }
+    }
+
     private void drawBoss1Bullets() {
         for(int s = 0; s<bs1bullets.size(); s++) {
             drawBoss1Bullet(bs1bullets.get(s));
@@ -1015,7 +1129,7 @@ public class Interfire implements KeyListener {
 
                 globals.steps++;
             } catch(Exception e) {
-                
+
             }
         }
         for(int s = 0; s<25; s++) {
@@ -1028,7 +1142,8 @@ public class Interfire implements KeyListener {
         if(g == null) {
             g = p.getGraphics();
         }
-        if(flatTankImg == null) {
+        if(flatTankImg == null || totank > 4) {
+            if(totank <= 4)
             try {
                 for(int s = 0; s<25; s++) {
                     int v = 100 + rand.nextInt(30);
@@ -1046,7 +1161,8 @@ public class Interfire implements KeyListener {
                 
             }
             try {
-                flatTankImg = ImageIO.read(getClass().getResourceAsStream("enemy2.png"));
+                javax.swing.ImageIcon iFb = new javax.swing.ImageIcon(this.getClass().getResource("enemysoldier2.gif"));
+                flatTankImg = iFb.getImage();
             } catch(Exception e) {
                 
             }
@@ -1069,6 +1185,39 @@ public class Interfire implements KeyListener {
             }
         }
         g.drawImage(tankImg2, tk2.x, tk2.y, 150, 150, null);
+    }
+
+    class Boss2 {
+        int x, y;
+        int life = 400;
+        Random rr = new Random();
+        public void shoot() {
+            int v = rr.nextInt(250);
+            Boss1Bullet eb = new Boss1Bullet();
+            eb.x = this.x + 26 + 51 + v;
+            eb.y = this.y + 90 + 60;
+            bs1bullets.add(eb);
+            eb = new Boss1Bullet();
+            eb.x = this.x + 36 + 51 + v;
+            eb.y = this.y + 90 + 60;
+            bs1bullets.add(eb);
+            eb = new Boss1Bullet();
+            eb.x = this.x + 26 + 51 + v;
+            eb.y = this.y + 50 + 60;
+            bs1bullets.add(eb);
+            eb = new Boss1Bullet();
+            eb.x = this.x + 36 + 51 + v;
+            eb.y = this.y + 50 + 60;
+            bs1bullets.add(eb);
+            eb = new Boss1Bullet();
+            eb.x = this.x + 26 + 51 + v;
+            eb.y = this.y + 10 + 60;
+            bs1bullets.add(eb);
+            eb = new Boss1Bullet();
+            eb.x = this.x + 36 + 51 + v;
+            eb.y = this.y + 10 + 60;
+            bs1bullets.add(eb);
+        }
     }
 
     class Boss1 {
@@ -1104,6 +1253,40 @@ public class Interfire implements KeyListener {
         }
     }
     
+    BufferedImage boss2Img = null;
+
+    BufferedImage boss2BulletImg = null;
+    
+    Boss2 bs2 = null;
+    
+    public void drawBoss2Bullet(Boss2Bullet b) {
+        if(g == null) {
+            g = p.getGraphics();
+        }
+        if(boss2BulletImg == null) {
+            try {
+                boss2BulletImg = ImageIO.read(getClass().getResourceAsStream("missileboss1.png"));
+            } catch(Exception e) {
+                
+            }
+        }
+        g.drawImage(boss2BulletImg, b.x, b.y, 16, 47, null);
+    }
+    
+    public void drawBoss2() {
+        if(g == null) {
+            g = p.getGraphics();
+        }
+        if(boss2Img == null) {
+            try {
+                boss2Img = ImageIO.read(getClass().getResourceAsStream("boss1b.png"));
+            } catch(Exception e) {
+                
+            }
+        }
+        g.drawImage(boss2Img, bs2.x, bs2.y, 350, 200, null);
+    }
+
     public void drawBoss1Bullet(Boss1Bullet b) {
         if(g == null) {
             g = p.getGraphics();
@@ -1124,11 +1307,7 @@ public class Interfire implements KeyListener {
         }
         if(boss1Img == null) {
             try {
-                int v = rand.nextInt(2);
-                if(v == 0)
-                    boss1Img = ImageIO.read(getClass().getResourceAsStream("boss1b.png"));
-                else
-                    boss1Img = ImageIO.read(getClass().getResourceAsStream("boss1.png"));
+                boss1Img = ImageIO.read(getClass().getResourceAsStream("boss1.png"));
             } catch(Exception e) {
                 
             }
