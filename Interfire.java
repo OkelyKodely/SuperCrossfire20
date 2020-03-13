@@ -36,7 +36,7 @@ public class Interfire implements KeyListener {
     
     private Image flatTankImg = null;
     
-    private BufferedImage tankImg2 = null;
+    private Image tankImg2 = null;
     
     private boolean start = true;
 
@@ -70,13 +70,13 @@ public class Interfire implements KeyListener {
     
     private ArrayList<Boss1Bullet> tkbullets = new ArrayList<>();
 
-    private BufferedImage tankImg = null;
+    private Image tankImg = null;
     
     private long points = 0;
     
     private boolean aerialFightAgain = false;
     
-    private int life = 10;
+    private int life = 30;
     
     private int enemies = 10;
     
@@ -139,7 +139,7 @@ public class Interfire implements KeyListener {
         }
         g.drawImage(boss1Img, 50, 50, 350, 200, null);
         g.setFont(new Font("Tahoma",Font.ITALIC,30));
-        g.drawString("Super Interfire 20", 200, 260);
+        g.drawString("Super Interfire 20", 200, 250);
         g.setFont(new Font("Tahoma",Font.PLAIN,13));
         g.drawString("Move: Arrow Buttons      Fire: Period Button", 10, 310);
         g.drawString("DON'T GET HIT BY THE ENEMY FIRE!", 10, 370);
@@ -159,14 +159,36 @@ public class Interfire implements KeyListener {
             e.printStackTrace();
         }
 
-        addSound();
-
-        setGui();
-
-        setGame();
-
+        menu();
     }
 
+    private void menu() {
+        Thread aa = new Thread() {
+            public void run() {
+                setGui();
+                try {
+                    Thread.sleep(1000);
+                } catch(Exception e) {}
+
+                if(g == null) {
+                    g = p.getGraphics();
+                    g.setColor(Color.BLUE);
+                    g.fillRect(0, 0, 1100, 700);
+                    
+                    g.setColor(Color.white);
+                    
+                    g.setFont(new Font("arial",Font.BOLD,30));
+                    g.drawString("Super Interfire 20", 10, 50);
+                            
+                    g.setFont(new Font("arial",Font.BOLD,15));
+                    g.drawString("> PLAY", 10, 100);
+                    g.drawString("QUIT", 10, 150);
+                }
+            }
+        };
+        aa.start();
+    }
+    
     class FlatTank {
         int x, y;
         int q;
@@ -216,6 +238,8 @@ public class Interfire implements KeyListener {
     }
     
     public void addSound() {
+        if(1==1)
+            return;
         try {
             File audioFile = new File("theme.wav");
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
@@ -343,14 +367,26 @@ public class Interfire implements KeyListener {
             for(int ii=0; ii<lasers.size(); ii++) {
 
                 for(int qq=0; qq<ee.size(); qq++)
-                if(lasers.get(ii).x > ee.get(qq).x && lasers.get(ii).x < ee.get(qq).x + 80 &&
-                   lasers.get(ii).y > ee.get(qq).y && lasers.get(ii).y < ee.get(qq).y + 100) {
+                    if(totank > 10) {
+                        if(lasers.get(ii).x > ee.get(qq).x && lasers.get(ii).x < ee.get(qq).x + 25 &&
+                           lasers.get(ii).y > ee.get(qq).y && lasers.get(ii).y < ee.get(qq).y + 45) {
 
-                    lasers.remove(lasers.get(ii));
+                            lasers.remove(lasers.get(ii));
 
-                    ee.remove(ee.get(qq));
+                            ee.remove(ee.get(qq));
 
-                    points += 231;
+                            points += 231;
+                        }
+                    } else {
+                        if(lasers.get(ii).x > ee.get(qq).x && lasers.get(ii).x < ee.get(qq).x + 80 &&
+                           lasers.get(ii).y > ee.get(qq).y && lasers.get(ii).y < ee.get(qq).y + 100) {
+
+                            lasers.remove(lasers.get(ii));
+
+                            ee.remove(ee.get(qq));
+
+                            points += 231;
+                        }
                 }
             }
         } catch(Exception npe) {
@@ -464,34 +500,103 @@ public class Interfire implements KeyListener {
     public void keyTyped(KeyEvent e) {
     }
 
+    boolean menu = true;
+    boolean a = true;
     @Override
     public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-            if(globals.xx-10 < 0) {
-                
-            } else
-            globals.xx-=10;
+        if(menu) {
+            if(e.getKeyCode() == KeyEvent.VK_DOWN) {
+                if(a) {
+                    a = false;
+                    g.setColor(Color.BLUE);
+                    g.fillRect(0, 0, 1100, 750);
+                    
+                    g.setColor(Color.white);
+                    
+                    g.setFont(new Font("arial",Font.BOLD,30));
+                    g.drawString("Super Interfire 20", 10, 50);
+                            
+                    g.setFont(new Font("arial",Font.BOLD,15));
+                    g.drawString("PLAY", 10, 100);
+                    g.drawString("> QUIT", 10, 150);
+                } else {
+                    a = true;
+                    g.setColor(Color.BLUE);
+                    g.fillRect(0, 0, 1100, 750);
+                    
+                    g.setColor(Color.white);
+                    
+                    g.setFont(new Font("arial",Font.BOLD,30));
+                    g.drawString("Super Interfire 20", 10, 50);
+                            
+                    g.setFont(new Font("arial",Font.BOLD,15));
+                    g.drawString("> PLAY", 10, 100);
+                    g.drawString("QUIT", 10, 150);
+                }
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+                Thread abc = new Thread() {
+                    public void run() {
+                        if(a) {
+                            menu = false;
+                            addSound();
+                            Thread cba = new Thread() {
+                                public void run() {
+                                    setGame();
+                                    j.requestFocus();
+                                }
+                            };
+                            cba.start();
+                        } else {
+                            System.exit(0);
+                        }
+                    }
+                };
+                abc.start();
+            }
         }
-        if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            if(globals.xx+10 > 1000) {
-                
-            } else
-            globals.xx+=10;
-        }
-        if(e.getKeyCode() == KeyEvent.VK_UP) {
-            if(globals.i-10 < 0) {
-                
-            } else
-            globals.i-=10;
-        }
-        if(e.getKeyCode() == KeyEvent.VK_DOWN) {
-            if(globals.i+10 > 600) {
-                
-            } else
-            globals.i+=10;
-        }
-        if(e.getKeyCode() == KeyEvent.VK_PERIOD) {
-            fire(lasers);
+        else if(!menu) {
+            if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                g.setColor(Color.BLUE);
+                g.fillRect(0, 0, 1100, 750);
+
+                g.setColor(Color.white);
+
+                g.setFont(new Font("arial",Font.BOLD,30));
+                g.drawString("Super Interfire 20", 10, 50);
+
+                g.setFont(new Font("arial",Font.BOLD,15));
+                g.drawString("> PLAY", 10, 100);
+                g.drawString("QUIT", 10, 150);
+                menu = true;
+            }
+            if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+                if(globals.xx-10 < 0) {
+
+                } else
+                globals.xx-=10;
+            }
+            if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                if(globals.xx+10 > 1000) {
+
+                } else
+                globals.xx+=10;
+            }
+            if(e.getKeyCode() == KeyEvent.VK_UP) {
+                if(globals.i-10 < 0) {
+
+                } else
+                globals.i-=10;
+            }
+            if(e.getKeyCode() == KeyEvent.VK_DOWN) {
+                if(globals.i+10 > 600) {
+
+                } else
+                globals.i+=10;
+            }
+            if(e.getKeyCode() == KeyEvent.VK_PERIOD) {
+                fire(lasers);
+            }
         }
     }
 
@@ -649,6 +754,9 @@ public class Interfire implements KeyListener {
     boolean bs1went = false;
     
     public void setGame() {
+        points = 0;
+        life = 30;
+        ee.clear();
         globals = Globals.getInstance();
         globals.g = p.getGraphics();
         Thread t = new Thread() {
@@ -656,273 +764,329 @@ public class Interfire implements KeyListener {
                 boolean ll2 = false;
                 boolean ll1 = false;
                 Random rand = new Random();
-                while(true) {
-                    if(ee.size() == 0) {
-                        if(aerialFightAgain && totank < 2) {
-                            steeps = 0;
-                            aerialFightAgain = false;
-                            notk = true;
-                        }
-                        steeps++;
-                        if(steeps <= 2) {
-                            Random rrand = new Random();
-                            for(int s = 0; s < 25; s++) {
-                                int v = rrand.nextInt(1100);
-                                int w = -300 + rrand.nextInt(300);
-                                EnemyJet ej = new EnemyJet();
-                                ej.x = v;
-                                ej.y = w;
-                                ee.add(ej);
-                            }
-                            greatYouKilledEmAll();
-                            life+=2;
-                        }
-                        else if(notk) {
-                            notk = false;
-                            
-                            Random ran = new Random();
-                            
-                            tk = new Tank();
-                            tk.x = 600 + ran.nextInt(200);
-                            tk.y = 200;
-                        
-                            tk2 = new Tank();
-                            tk2.x = 170 + ran.nextInt(300);
-                            tk2.y = -100;
-                            
-                            totank ++;
-                        }
-                        
+                while(true && !menu) {
+                    if(menu) {
+                        points = 0;
+                        life = 30;
+                        ee.clear();
+
+                        g.setColor(Color.BLUE);
+                        g.fillRect(0, 0, 1100, 750);
+
+                        g.setColor(Color.white);
+
+                        g.setFont(new Font("arial",Font.BOLD,30));
+                        g.drawString("Super Interfire 20", 10, 50);
+
+                        g.setFont(new Font("arial",Font.BOLD,15));
+                        g.drawString("> PLAY", 10, 100);
+                        g.drawString("QUIT", 10, 150);
+                        break;
                     }
-                    if(ee.size() > 0) {
-                        for(int s=0; s<ee.size(); s++) {
-                            if(ee.get(s).y < 350 && cc == 0)
-                                ee.get(s).y+=4;
-                            else
-                                cc++;
-                            if(cc > 25) {
-                                cc = 0;
+                    if (!menu) {
+                        if(ee.size() == 0) {
+                            if(aerialFightAgain && totank < 2) {
+                                steeps = 0;
+                                aerialFightAgain = false;
+                                notk = true;
                             }
-                            if(cc > 0 && cc < 25) {
-                                ee.get(s).y-=7;
+                            steeps++;
+                            if(steeps <= 2) {
+                                Random rrand = new Random();
+                                for(int s = 0; s < 12; s++) {
+                                    int v = rrand.nextInt(1100);
+                                    int w = -300 + rrand.nextInt(300);
+                                    EnemyJet ej = new EnemyJet();
+                                    ej.x = v;
+                                    ej.y = w;
+                                    ee.add(ej);
+                                }
+                                greatYouKilledEmAll();
+                                life+=6;
+                                v = rand.nextInt(2);
+                                try {
+                                    for(int s = 0; s<12; s++) {
+                                        int v = 1 + rand.nextInt(30);
+                                        int w = 1 + rand.nextInt(30);
+                                        ee.get(s).x = w*v;
+                                        int vv = rand.nextInt(3) + 1;
+                                        if(vv == 1)
+                                            ee.get(s).y = 100;
+                                        if(vv == 2)
+                                            ee.get(s).y = 200;
+                                        if(vv == 3)
+                                            ee.get(s).y = 300;
+                                    }
+                                } catch(Exception e) {
+
+                                }
+                                tk = new Tank();
+                                tk.x = 600 + rand.nextInt(200);
+                                tk.y = 200;
+
+                                tk2 = new Tank();
+                                tk2.x = 170 + rand.nextInt(300);
+                                tk2.y = -100;
                             }
+                            else if(notk) {
+                                notk = false;
+
+                                Random ran = new Random();
+
+                                tk = new Tank();
+                                tk.x = 600 + ran.nextInt(200);
+                                tk.y = 200;
+
+                                tk2 = new Tank();
+                                tk2.x = 170 + ran.nextInt(300);
+                                tk2.y = -100;
+
+                                totank ++;
+                            }
+
                         }
-                    }
-                    if(bs1 == null && totank == 3) {
-                        bs1 = new Boss1();
-                        bs1.x = 300;
-                        bs1.y = 150;
-                        
-                    }
-                    if(bs2 == null && (totank == 6 || totank == 8 || totank == 10 || totank == 12 || totank == 14 || totank == 16 || totank == 18 || totank == 20)) {
-                        bs2 = new Boss2();
-                        bs2.x = 300;
-                        bs2.y = 150;
-    
-                        if(totank >= 14)
-                            boss2str = "heli.gif";
-                    }
-                    
-                    if(ft.size() > 0) {
-                        for(int s=0; s<ft.size(); s++) {
-                            if(ft.get(s).y < 350 && dd == 0)
-                                ft.get(s).y+=4;
-                            else
-                                dd++;
-                            if(dd > 25) {
-                                dd = 0;
-                            }
-                            if(dd > 0 && dd < 25) {
-                                ft.get(s).y-=7;
-                            }
-                        }
-                    }
-                    try {
-                        //j.setTitle("Points: " + points + ", Life: " + life);
-                        j.setTitle("totank: " + totank);
-                        for(int s = 0; s<25; s++) {
-                            int v = rand.nextInt(165);
-                            if(v == 0) {
-                                if(s < ee.size())
-                                    ee.get(s).shoot();
-                            }
-                        }
-                        
-                        if(tk2 != null)
-                        if(tk2.life <= 0) {
-                            tk2.life = 0;
-                            pu = new RedPowerUp();
-                            pu.x = tk2.x;
-                            pu.y = tk2.y;
-                            tk2 = null;
-                            ll2 = true;
-                        }
-                        
-                        if(tk != null) {
-                            if(tk.life <= 0) {
-                                tk.life = 0;
-                                tk = null;
-                                ll1 = true;
-                                bs1went = true;
-                            }
-                        }
-                        
-                        if(bs2 != null) {
-                            if(bs2.life <= 0) {
-                                bs2.life = 0;
-                                bs2 = null;
-                                if (totank == 20) {
-                                    JOptionPane.showMessageDialog(null, "You killed 'em all. so you won!");
-                                    System.exit(0);
+                        if(ee.size() > 0) {
+                            for(int s=0; s<ee.size(); s++) {
+                                if(ee.get(s).y < 350 && cc == 0)
+                                    ee.get(s).y+=4;
+                                else
+                                    cc++;
+                                if(cc > 12) {
+                                    cc = 0;
+                                }
+                                if(cc > 0 && cc < 12) {
+                                    ee.get(s).y-=7;
                                 }
                             }
                         }
+                        if(bs1 == null && totank == 3) {
+                            bs1 = new Boss1();
+                            bs1.x = 300;
+                            bs1.y = 150;
 
-                        if(bs1 != null) {
-                            if(bs1.life <= 0) {
-                                bs1.life = 0;
-                                bs1 = null;
-                            }
+                        }
+                        if(bs2 == null && (totank == 6 || totank == 8 || totank == 10 || totank == 12 || totank == 14 || totank == 16 || totank == 18 || totank == 20)) {
+                            bs2 = new Boss2();
+                            bs2.x = 300;
+                            bs2.y = 150;
+
+                            if(totank >= 14)
+                                boss2str = "heli.gif";
                         }
 
-                        if(tk2 != null) {
+                        if(ft.size() > 0) {
+                            for(int s=0; s<ft.size(); s++) {
+                                if(ft.get(s).y < 350 && dd == 0)
+                                    ft.get(s).y+=4;
+                                else
+                                    dd++;
+                                if(dd > 12) {
+                                    dd = 0;
+                                }
+                                if(dd > 0 && dd < 12) {
+                                    ft.get(s).y-=7;
+                                }
+                            }
+                        }
+                        try {
+                            j.setTitle("Points: " + points + ", Life: " + life);
+                            for(int s = 0; s<12; s++) {
+                                int v = rand.nextInt(165);
+                                if(v == 0) {
+                                    if(s < ee.size())
+                                        ee.get(s).shoot();
+                                }
+                            }
+
+                            if(tk2 != null)
                             if(tk2.life <= 0) {
                                 tk2.life = 0;
+                                pu = new RedPowerUp();
+                                pu.x = tk2.x;
+                                pu.y = tk2.y;
                                 tk2 = null;
                                 ll2 = true;
-                                bs1went = true;
                             }
-                        }
-                        
-                        if(pu != null) { 
-                            pu.draw();
-                            if(ateRedPowerUp())
-                                pu = null;
-                        }
-                        
-                        if(ll2 && ll1) {
-                            aerialFightAgain = true;
-                            ll2 = false;
-                            ll1 = false;
-                        }
-                        
-                        if(tk2 != null)
-                            checkForTank2Shot();
-                        if(tk != null)
-                            checkForTankShot();
-                        if(bs1 != null)
-                            checkForBoss1Shot();
-                        if(bs2 != null)
-                            checkForBoss2Shot();
-                        checkForFtShot();
-                        checkForEnemyShot();
-                        checkForEnemyShotShot();
-                        int v = rand.nextInt(165);
-                        if(v == 0 && tk2 != null) {
-                            tk2.shoot();
-                        }
-                        if(isHeroShot() || isHeroShotTk()) {
-                            life--;
-                            powerUp = 1;
-                        }
-                        if(life == 0)
-                            System.exit(0);
-                        if(tk2 != null)
-                            moveTk2Shots();
-                        if(tk != null)
-                            moveTkShots();
-                        
-                        game.moveShots(shots);
-                        if((powerUp == 0 || powerUp == 1) && powerUpKind.equals("red")) {
-                            game.moveLasers(lasers);
-                        }
-                        else {
-                            for(int s = 0; s<lasers.size(); s++) {
-                                lasers.get(s).x += lasers.get(s).powerUpRedMove;
-                                lasers.get(s).y -= 30;
+
+                            if(tk != null) {
+                                if(tk.life <= 0) {
+                                    tk.life = 0;
+                                    tk = null;
+                                    ll1 = true;
+                                    bs1went = true;
+                                }
                             }
-                        }
-                        Thread.sleep(50);
-                    } catch(Exception e) {
-                        
-                    }
-                    for(int s = 0; s<25; s++) {
-                        try {
-                            ee.get(s).move();
-                        } catch(Exception npe) {
-                            
-                        }
-                    }
-                    if(ft.size() > 0) {
-                        for(int s = 0; s<25; s++) {
-                            try {
-                                ft.get(s).move();
-                            } catch(Exception npe) {
-                                
+
+                            if(bs2 != null) {
+                                if(bs2.life <= 0) {
+                                    bs2.life = 0;
+                                    bs2 = null;
+                                    if (totank == 20) {
+                                        JOptionPane.showMessageDialog(null, "You killed 'em all. so you won!");
+                                        menu = true;
+                                    }
+                                }
                             }
-                        }
-                    }
-                    if(ft.size() > 0) {
-                        for(int s = 0; s<25; s++) {
+
+                            if(bs1 != null) {
+                                if(bs1.life <= 0) {
+                                    bs1.life = 0;
+                                    bs1 = null;
+                                }
+                            }
+
+                            if(tk2 != null) {
+                                if(tk2.life <= 0) {
+                                    tk2.life = 0;
+                                    tk2 = null;
+                                    ll2 = true;
+                                    bs1went = true;
+                                }
+                            }
+
+                            if(pu != null) { 
+                                pu.draw();
+                                if(ateRedPowerUp())
+                                    pu = null;
+                            }
+
+                            if(ll2 && ll1) {
+                                aerialFightAgain = true;
+                                ll2 = false;
+                                ll1 = false;
+                            }
+
+                            if(tk2 != null)
+                                checkForTank2Shot();
+                            if(tk != null)
+                                checkForTankShot();
+                            if(bs1 != null)
+                                checkForBoss1Shot();
+                            if(bs2 != null)
+                                checkForBoss2Shot();
+                            checkForFtShot();
+                            checkForEnemyShot();
+                            checkForEnemyShotShot();
                             int v = rand.nextInt(165);
-                            if(v == 0) {
-                                if(s < ft.size())
-                                    ft.get(s).shoot();
+                            if(v == 0 && tk2 != null) {
+                                tk2.shoot();
+                            }
+                            if(isHeroShot() || isHeroShotTk()) {
+                                life--;
+                                powerUp = 1;
+                            }
+                            if(life == 0)
+                                menu = true;
+                            if(tk2 != null)
+                                moveTk2Shots();
+                            if(tk != null)
+                                moveTkShots();
+
+                            game.moveShots(shots);
+                            if((powerUp == 0 || powerUp == 1) && powerUpKind.equals("red")) {
+                                game.moveLasers(lasers);
+                            }
+                            else {
+                                for(int s = 0; s<lasers.size(); s++) {
+                                    lasers.get(s).x += lasers.get(s).powerUpRedMove;
+                                    lasers.get(s).y -= 30;
+                                }
+                            }
+                            Thread.sleep(50);
+                        } catch(Exception e) {
+
+                        }
+                        for(int s = 0; s<12; s++) {
+                            try {
+                                ee.get(s).move();
+                            } catch(Exception npe) {
+
                             }
                         }
-                    }
-                    moveFtShots(tk2bullets);
-                    drawField();
-                    if(ft.size() == 0 && totank >= 1 && bs1 == null && bs2 == null) {
-                        Random rrand = new Random();
-                        for(int s = 0; s < 25; s++) {
-                            int v = rrand.nextInt(1100);
-                            int w = -300 + rrand.nextInt(300);
-                            FlatTank ej = new FlatTank();
-                            ej.x = v;
-                            ej.y = w;
-                            ft.add(ej);
-                            greatYouKilledEmAll();
+                        if(ft.size() > 0) {
+                            for(int s = 0; s<12; s++) {
+                                try {
+                                    ft.get(s).move();
+                                } catch(Exception npe) {
+
+                                }
+                            }
                         }
-                        totank ++;
-                    }
-                    if(bs1 != null) {
-                        Random rrr = new Random();
-                        int v = rrr.nextInt(42);
-                        if(v == 0) {
-                            bs1.shoot();
+                        if(ft.size() > 0) {
+                            for(int s = 0; s<12; s++) {
+                                int v = rand.nextInt(165);
+                                if(v == 0) {
+                                    if(s < ft.size())
+                                        ft.get(s).shoot();
+                                }
+                            }
                         }
-                        drawBoss1();
-                        drawBoss1Bullets();
-                        moveBoss1Bullets();
-                    }
-                    if(bs2 != null) {
-                        Random rrr = new Random();
-                        int v = rrr.nextInt(16);
-                        if(v == 0) {
-                            bs2.shoot();
+                        moveFtShots(tk2bullets);
+                        drawField();
+                        if(ft.size() == 0 && totank >= 1 && bs1 == null && bs2 == null) {
+                            Random rrand = new Random();
+                            for(int s = 0; s < 12; s++) {
+                                int v = rrand.nextInt(1100);
+                                int w = -300 + rrand.nextInt(300);
+                                FlatTank ej = new FlatTank();
+                                ej.x = v;
+                                ej.y = w;
+                                ft.add(ej);
+                                greatYouKilledEmAll();
+                            }
+                            totank ++;
                         }
-                        drawBoss2();
-                        drawBoss2Bullets();
-                        moveBoss2Bullets();
-                    }
-                    drawTank2Bullets();
-                    drawFlatTank();
-                    game.drawHeroJet(heroImg);
-                    drawEnemyJet();
-                    if(tk != null) {
-                        drawTank();
-                        moveTk();
-                    }
-                    if(tk2 != null) {
-                        drawTank2();
-                        moveTk2();
+                        if(bs1 != null) {
+                            Random rrr = new Random();
+                            int v = rrr.nextInt(42);
+                            if(v == 0) {
+                                bs1.shoot();
+                            }
+                            drawBoss1();
+                            drawBoss1Bullets();
+                            moveBoss1Bullets();
+                        }
+                        if(bs2 != null) {
+                            Random rrr = new Random();
+                            int v = rrr.nextInt(16);
+                            if(v == 0) {
+                                bs2.shoot();
+                            }
+                            drawBoss2();
+                            drawBoss2Bullets();
+                            moveBoss2Bullets();
+                        }
                         drawTank2Bullets();
+                        drawFlatTank();
+                        game.drawHeroJet(heroImg);
+                        drawEnemyJet();
+                        if(tk != null) {
+                            drawTank();
+                            moveTk();
+                        }
+                        if(tk2 != null) {
+                            drawTank2();
+                            moveTk2();
+                            drawTank2Bullets();
+                        }
+                        game.drawShots(shots, enemyBulletImg);
+                        game.drawLasers(lasers, bulletImg);
                     }
-                    game.drawShots(shots, enemyBulletImg);
-                    game.drawLasers(lasers, bulletImg);
                 }
+
+                g.setColor(Color.BLUE);
+                g.fillRect(0, 0, 1100, 750);
+
+                g.setColor(Color.white);
+
+                g.setFont(new Font("arial",Font.BOLD,30));
+                g.drawString("Super Interfire 20", 10, 50);
+
+                g.setFont(new Font("arial",Font.BOLD,15));
+                g.drawString("> PLAY", 10, 100);
+                g.drawString("QUIT", 10, 150);
             }
+                
         };
         t.start();
     }
@@ -1093,36 +1257,25 @@ public class Interfire implements KeyListener {
         return img;
     }
 
+    int v = -1;
+
     public void drawEnemyJet() {
         if(g == null) {
             g = p.getGraphics();
         }
-        if(enemyImg == null) {
+        if(enemyImg == null || 1==1) {
             try {
-                for(int s = 0; s<25; s++) {
-                    int v = 1 + rand.nextInt(30);
-                    int w = 1 + rand.nextInt(30);
-                    ee.get(s).x = w*v;
-                    int vv = rand.nextInt(3) + 1;
-                    if(vv == 1)
-                        ee.get(s).y = 100;
-                    if(vv == 2)
-                        ee.get(s).y = 200;
-                    if(vv == 3)
-                        ee.get(s).y = 300;
-                }
-            } catch(Exception e) {
-                
-            }
-            try {
-                enemyImg = ImageIO.read(getClass().getResourceAsStream("flattank.png"));
+                if(v == 0)
+                    enemyImg = ImageIO.read(getClass().getResourceAsStream("flattank.png"));
+                else if(v == 1)
+                    enemyImg = ImageIO.read(getClass().getResourceAsStream("enemy3.png"));
 
                 globals.steps++;
             } catch(Exception e) {
 
             }
         }
-        for(int s = 0; s<25; s++) {
+        for(int s = 0; s<12; s++) {
             if(s < ee.size())
                 g.drawImage(enemyImg, ee.get(s).x, ee.get(s).y, 80, 100, null);
         }
@@ -1135,7 +1288,7 @@ public class Interfire implements KeyListener {
         if(flatTankImg == null || totank > 4) {
             if(totank <= 4)
             try {
-                for(int s = 0; s<25; s++) {
+                for(int s = 0; s<12; s++) {
                     int v = 100 + rand.nextInt(30);
                     int w = 1 + rand.nextInt(30);
                     ft.get(s).x = w*v;
@@ -1151,15 +1304,24 @@ public class Interfire implements KeyListener {
                 
             }
             try {
-                javax.swing.ImageIcon iFb = new javax.swing.ImageIcon(this.getClass().getResource("enemysoldier2.gif"));
-                flatTankImg = iFb.getImage();
+                if(totank > 10) {
+                    javax.swing.ImageIcon iFb = new javax.swing.ImageIcon(this.getClass().getResource("enemysoldier2.gif"));
+                    flatTankImg = iFb.getImage();
+                } else {
+                    javax.swing.ImageIcon iFb = new javax.swing.ImageIcon(this.getClass().getResource("flattank.png"));
+                    flatTankImg = iFb.getImage();
+                }
             } catch(Exception e) {
                 
             }
         }
-        for(int s = 0; s<25; s++) {
-            if(s < ft.size())
-                g.drawImage(flatTankImg, ft.get(s).x, ft.get(s).y, 20, 35, null);
+        for(int s = 0; s<12; s++) {
+            if(s < ft.size()) {
+                if(totank > 10)
+                   g.drawImage(flatTankImg, ft.get(s).x, ft.get(s).y, 20, 35, null);
+                else
+                   g.drawImage(flatTankImg, ft.get(s).x, ft.get(s).y, 80, 100, null);
+            }
         }
     }
 
@@ -1169,7 +1331,8 @@ public class Interfire implements KeyListener {
         }
         if(tankImg2 == null) {
             try {
-                tankImg2 = ImageIO.read(getClass().getResourceAsStream("tank.png"));
+                javax.swing.ImageIcon iFb = new javax.swing.ImageIcon(this.getClass().getResource("dragon.gif"));
+                tankImg2 = iFb.getImage();
             } catch(Exception e) {
                 
             }
@@ -1328,7 +1491,8 @@ public class Interfire implements KeyListener {
         }
         if(tankImg == null) {
             try {
-                tankImg = ImageIO.read(getClass().getResourceAsStream("tank.png"));
+                javax.swing.ImageIcon iFb = new javax.swing.ImageIcon(this.getClass().getResource("dragon.gif"));
+                tankImg = iFb.getImage();
             } catch(Exception e) {
                 
             }
