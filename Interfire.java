@@ -187,7 +187,7 @@ public class Interfire implements KeyListener {
         }
         g.drawImage(boss1Img, 50, 50, 350, 200, null);
         g.setFont(new Font("Tahoma",Font.ITALIC,30));
-        g.drawString("Super Spitfire 20", 200, 250);
+        g.drawString("Super Crossfire 20", 200, 250);
         g.setFont(new Font("Tahoma",Font.PLAIN,13));
         g.drawString("Move: Arrow Buttons    Fire: Period Button", 10, 310);
         g.drawString("DON'T GET HIT BY THE ENEMY FIRE!", 10, 370);
@@ -225,7 +225,7 @@ public class Interfire implements KeyListener {
                     g.setColor(Color.white);
                     
                     g.setFont(new Font("arial",Font.BOLD,30));
-                    g.drawString("Super Spitfire 20", 10, 50);
+                    g.drawString("Super Crossfire 20", 10, 50);
                             
                     g.setFont(new Font("arial",Font.BOLD,15));
                     g.drawString("> PLAY NEW GAME", 10, 100);
@@ -661,7 +661,7 @@ public class Interfire implements KeyListener {
                     g.setColor(Color.white);
                     
                     g.setFont(new Font("arial",Font.BOLD,30));
-                    g.drawString("Super Spitfire 20", 10, 50);
+                    g.drawString("Super Crossfire 20", 10, 50);
                             
                     g.setFont(new Font("arial",Font.BOLD,15));
                     g.drawString("PLAY NEW GAME", 10, 100);
@@ -684,7 +684,7 @@ public class Interfire implements KeyListener {
                     g.setColor(Color.white);
                     
                     g.setFont(new Font("arial",Font.BOLD,30));
-                    g.drawString("Super Spitfire 20", 10, 50);
+                    g.drawString("Super Crossfire 20", 10, 50);
                             
                     g.setFont(new Font("arial",Font.BOLD,15));
                     g.drawString("> PLAY NEW GAME", 10, 100);
@@ -742,7 +742,7 @@ public class Interfire implements KeyListener {
                 g.setColor(Color.white);
 
                 g.setFont(new Font("arial",Font.BOLD,30));
-                g.drawString("Super Spitfire 20", 10, 50);
+                g.drawString("Super Crossfire 20", 10, 50);
 
                 g.setFont(new Font("arial",Font.BOLD,15));
                 g.drawString("> PLAY NEW GAME", 10, 100);
@@ -953,7 +953,7 @@ public class Interfire implements KeyListener {
                         g.setColor(Color.white);
 
                         g.setFont(new Font("arial",Font.BOLD,30));
-                        g.drawString("Super Spitfire 20", 10, 50);
+                        g.drawString("Super Crossfire 20", 10, 50);
 
                         g.setFont(new Font("arial",Font.BOLD,15));
                         g.drawString("> PLAY NEW GAME", 10, 100);
@@ -1277,7 +1277,7 @@ public class Interfire implements KeyListener {
                 g.setColor(Color.white);
 
                 g.setFont(new Font("arial",Font.BOLD,30));
-                g.drawString("Super Spitfire 20", 10, 50);
+                g.drawString("Super Crossfire 20", 10, 50);
 
                 g.setFont(new Font("arial",Font.BOLD,15));
                 g.drawString("> PLAY NEW GAME", 10, 100);
