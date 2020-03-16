@@ -153,6 +153,8 @@ public class Interfire implements KeyListener {
 
     private RedPowerUp pu = null;
     
+    private MagentaPowerUp pu2 = null;
+
     private int powerUp = 1;
 
     private String powerUpKind = "red";
@@ -216,7 +218,6 @@ public class Interfire implements KeyListener {
                 setGui();
                 if(g == null) {
                     g = p.getGraphics();
-                    g.setColor(Color.GREEN);
                     try {
                         Image iii = ImageIO.read(getClass().getResourceAsStream("def.png"));
                         g.drawImage(iii, 0, 0, 1100, 750, null);
@@ -395,10 +396,31 @@ public class Interfire implements KeyListener {
                 g = p.getGraphics();
             }
             g.setColor(Color.red);
-            g.fillOval(x, y, 20, 20);
+            
+            g.fillOval(x, y, 40, 40);
+            
+            g.setColor(Color.white);
+            g.setFont(new Font("arial", Font.PLAIN, 12));
+            g.drawString("Red", x, y);
         }
     }
     
+    class MagentaPowerUp {
+        int x, y;
+        private void draw() {
+            if(g == null) {
+                g = p.getGraphics();
+            }
+            g.setColor(Color.magenta);
+            
+            g.fillOval(x, y, 40, 40);
+            
+            g.setColor(Color.white);
+            g.setFont(new Font("arial", Font.PLAIN, 12));
+            g.drawString("Magenta", x, y);
+        }
+    }
+
     class Cloud2 {
         int x, y;
     }
@@ -427,9 +449,22 @@ public class Interfire implements KeyListener {
         }
     }
 
+    private boolean ateMagentaPowerUp() {
+        if(globals.xx+40 > pu2.x && globals.xx+40 < pu2.x + 45 &&
+           globals.i+50 > pu2.y && globals.i+50 < pu2.y + 45) {
+            powerUp ++;
+            if(!powerUpKind.equals("magenta")) {
+                powerUpKind = "red";
+                powerUp = 1;
+            }
+            return true;
+        }
+        return false;
+    }
+    
     private boolean ateRedPowerUp() {
-        if(globals.xx+40 > pu.x && globals.xx+40 < pu.x + 25 &&
-           globals.i+50 > pu.y && globals.i+50 < pu.y + 25) {
+        if(globals.xx+40 > pu.x && globals.xx+40 < pu.x + 45 &&
+           globals.i+50 > pu.y && globals.i+50 < pu.y + 45) {
             powerUp ++;
             if(!powerUpKind.equals("red")) {
                 powerUpKind = "red";
@@ -450,7 +485,10 @@ public class Interfire implements KeyListener {
 
                     lasers.remove(lasers.get(ii));
 
-                    tk2.life--;
+                    if(powerUpKind.equals("magenta"))
+                        tk2.life -= 10;
+                    else
+                        tk2.life --;
                     
                     points += 231;
                 }
@@ -470,7 +508,10 @@ public class Interfire implements KeyListener {
 
                     lasers.remove(lasers.get(ii));
 
-                    tk.life--;
+                    if(powerUpKind.equals("magenta"))
+                        tk.life -= 10;
+                    else
+                        tk.life --;
 
                     points += 231;
                 }
@@ -534,8 +575,11 @@ public class Interfire implements KeyListener {
                lasers.get(ii).y > bs1.y && lasers.get(ii).y < bs1.y + 200) {
 
                 lasers.remove(lasers.get(ii));
-                
-                bs1.life --;
+
+                if(powerUpKind.equals("magenta"))
+                    bs1.life -= 10;
+                else
+                    bs1.life --;
 
                 Explode ex = new Explode();
                 ex.x = lasers.get(ii).x-30;
@@ -547,6 +591,52 @@ public class Interfire implements KeyListener {
         }
     }
     
+    class BomberShot {
+        int x, y;
+        int xm = 0;
+        int ym = 0;
+        void move() {
+            x += xm;
+            y += ym;
+        }
+    }
+    
+    ArrayList<BomberShot> bos = new ArrayList<>();
+    
+    class Bomber {
+        int x, y;
+        void draw() {
+            if(g == null) {
+                g = p.getGraphics();
+            }
+            if(bimg == null) {
+                try {
+                    bimg = ImageIO.read(getClass().getResourceAsStream("bomber.png"));
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            g.drawImage(bimg, x, y, 200, 80, null);
+        }
+        void shoot() {
+            int xi = globals.xx - x;
+            int yi = globals.i - y;
+            double xhf = ((double)xi/(double)yi)*3.0;
+            long yyu = Math.round(xhf);
+            long xxu = 3l;
+            BomberShot bs = new BomberShot();
+            bs.x = this.x;
+            bs.y = this.y;
+            bs.xm = (int)yyu;
+            bs.ym = (int)xxu;
+            bos.add(bs);
+        }
+    }
+    
+    BufferedImage bimg = null;
+    
+    ArrayList<Bomber> bombers = new ArrayList<>();
+    
     private void checkForBoss2Shot() {
         for(int ii=0; ii<lasers.size(); ii++) {
             if(lasers.get(ii).x > bs2.x && lasers.get(ii).x < bs2.x + 350 &&
@@ -554,7 +644,10 @@ public class Interfire implements KeyListener {
 
                 lasers.remove(lasers.get(ii));
                 
-                bs2.life --;
+                if(powerUpKind.equals("magenta"))
+                    bs2.life -= 10;
+                else
+                    bs2.life --;
 
                 Explode ex = new Explode();
                 ex.x = lasers.get(ii).x-30;
@@ -655,8 +748,10 @@ public class Interfire implements KeyListener {
             if(e.getKeyCode() == KeyEvent.VK_DOWN) {
                 if(a) {
                     a = false;
-                    g.setColor(Color.GREEN);
-                    g.fillRect(0, 0, 1100, 750);
+                    try {
+                        Image iii = ImageIO.read(getClass().getResourceAsStream("def.png"));
+                        g.drawImage(iii, 0, 0, 1100, 750, null);
+                    } catch(Exception ee) {}
                     
                     g.setColor(Color.white);
                     
@@ -678,8 +773,10 @@ public class Interfire implements KeyListener {
                     }
                 } else {
                     a = true;
-                    g.setColor(Color.GREEN);
-                    g.fillRect(0, 0, 1100, 750);
+                    try {
+                        Image iii = ImageIO.read(getClass().getResourceAsStream("def.png"));
+                        g.drawImage(iii, 0, 0, 1100, 750, null);
+                    } catch(Exception ee) {}
                     
                     g.setColor(Color.white);
                     
@@ -736,8 +833,10 @@ public class Interfire implements KeyListener {
         }
         else if(!menu) {
             if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                g.setColor(Color.GREEN);
-                g.fillRect(0, 0, 1100, 750);
+                try {
+                    Image iii = ImageIO.read(getClass().getResourceAsStream("def.png"));
+                    g.drawImage(iii, 0, 0, 1100, 750, null);
+                } catch(Exception ee) {}
 
                 g.setColor(Color.white);
 
@@ -814,6 +913,23 @@ public class Interfire implements KeyListener {
         
         if(tk.y == 100)
             goingDownTk = true;
+
+        
+        if(tk.powerUpK.equals("red")) {
+            g.setColor(Color.black);
+            g.drawOval(tk.x, tk.y, 40, 40);
+            g.setColor(Color.white);
+            g.setFont(new Font("arial", Font.PLAIN, 12));
+            g.drawString("?", tk.x, tk.y);
+        }
+
+        if(tk.powerUpK.equals("magenta")) {
+            g.setColor(Color.black);
+            g.drawOval(tk.x, tk.y, 40, 40);
+            g.setColor(Color.white);
+            g.setFont(new Font("arial", Font.PLAIN, 12));
+            g.drawString("?", tk.x, tk.y);
+        }
     }
     
     private void moveTk2() {
@@ -828,8 +944,21 @@ public class Interfire implements KeyListener {
         if(tk2.y == 100)
             goingDownTk2 = true;
     
-        g.setColor(Color.red);
-        g.fillOval(tk2.x, tk2.y, 20, 20);
+        if(tk2.powerUpK.equals("red")) {
+            g.setColor(Color.black);
+            g.drawOval(tk2.x, tk2.y, 40, 40);
+            g.setColor(Color.white);
+            g.setFont(new Font("arial", Font.PLAIN, 12));
+            g.drawString("?", tk2.x, tk2.y);
+        }
+
+        if(tk2.powerUpK.equals("magenta")) {
+            g.setColor(Color.black);
+            g.drawOval(tk2.x, tk2.y, 40, 40);
+            g.setColor(Color.white);
+            g.setFont(new Font("arial", Font.PLAIN, 12));
+            g.drawString("?", tk2.x, tk2.y);
+        }
     }
     
     public class EnemyJet {
@@ -902,6 +1031,7 @@ public class Interfire implements KeyListener {
     class Tank {
         int x, y;
         int life = 130;
+        String powerUpK = "red";
         public void shoot() {
             Boss1Bullet eb = new Boss1Bullet();
             eb.x = this.x + 26 + 51;
@@ -947,8 +1077,10 @@ public class Interfire implements KeyListener {
                         life = 30;
                         ee.clear();
 
-                        g.setColor(Color.GREEN);
-                        g.fillRect(0, 0, 1100, 750);
+                        try {
+                            Image iii = ImageIO.read(getClass().getResourceAsStream("def.png"));
+                            g.drawImage(iii, 0, 0, 1100, 750, null);
+                        } catch(Exception e) {}
 
                         g.setColor(Color.white);
 
@@ -1037,6 +1169,36 @@ public class Interfire implements KeyListener {
                                 }
                             }
                         }
+                        
+                        if(ee.size() == 1) {
+                            int v = rand.nextInt(10);
+                            if(v == 0) {
+                                for(int s = 0; s<10; s++) {
+                                    Bomber bom = new Bomber();
+                                    bom.y = 100;
+                                    bom.x = 1100 + rand.nextInt(1000);
+                                    bombers.add(bom);
+                                }
+                            }
+                        }
+
+                        if(bombers.size() > 0) {
+                            for(int s = 0; s<bombers.size(); s++) {
+                                bombers.get(s).x -= 30;
+                                int v = rand.nextInt(700);
+                                if(v == 0) {
+                                    bombers.get(s).shoot();
+                                }
+                            }
+                        }
+                        
+                        if(bos.size() > 0) {
+                            for(int s = 0; s<bos.size(); s++) {
+                                bos.get(s).x += bos.get(s).xm;
+                                bos.get(s).y += bos.get(s).ym;
+                            }
+                        }
+                        
                         if(bs1 == null && totank == 3) {
                             bs1 = new Boss1();
                             bs1.x = 300;
@@ -1079,12 +1241,32 @@ public class Interfire implements KeyListener {
                                 }
                             }
 
+                            String kkind = "red";
+                            int ggb = rand.nextInt(2);
+                            if(ggb == 0) {
+                                kkind = "red";
+                            }
+                            else if(ggb == 1) {
+                                kkind = "magenta";
+                            }
+                            
                             if(tk2 != null)
                             if(tk2.life <= 0) {
                                 tk2.life = 0;
-                                pu = new RedPowerUp();
-                                pu.x = tk2.x;
-                                pu.y = tk2.y;
+                                if(kkind.equals("red")) {
+                                    pu = new RedPowerUp();
+                                    pu.x = tk2.x;
+                                    pu.y = tk2.y;
+                                    tk2.powerUpK = "red";
+                                    powerUpKind = "red";
+                                }
+                                if(kkind.equals("magenta")) {
+                                    pu2 = new MagentaPowerUp();
+                                    pu2.x = tk2.x;
+                                    pu2.y = tk2.y;
+                                    tk2.powerUpK = "magenta";
+                                    powerUpKind = "magenta";
+                                }
                                 tk2 = null;
                                 ll2 = true;
                             }
@@ -1092,6 +1274,20 @@ public class Interfire implements KeyListener {
                             if(tk != null) {
                                 if(tk.life <= 0) {
                                     tk.life = 0;
+                                    if(kkind.equals("red")) {
+                                        pu = new RedPowerUp();
+                                        pu.x = tk.x;
+                                        pu.y = tk.y;
+                                        tk.powerUpK = "red";
+                                        powerUpKind = "red";
+                                    }
+                                    if(kkind.equals("magenta")) {
+                                        pu2 = new MagentaPowerUp();
+                                        pu2.x = tk.x;
+                                        pu2.y = tk.y;
+                                        tk.powerUpK = "magenta";
+                                        powerUpKind = "magenta";
+                                    }
                                     tk = null;
                                     ll1 = true;
                                     bs1went = true;
@@ -1129,6 +1325,12 @@ public class Interfire implements KeyListener {
                                 pu.draw();
                                 if(ateRedPowerUp())
                                     pu = null;
+                            }
+
+                            if(pu2 != null) { 
+                                pu2.draw();
+                                if(ateMagentaPowerUp())
+                                    pu2 = null;
                             }
 
                             if(ll2 && ll1) {
@@ -1204,6 +1406,16 @@ public class Interfire implements KeyListener {
                         }
                         moveFtShots(tk2bullets);
                         drawField();
+                        if(bombers.size() > 0) {
+                            for(int s = 0; s< bombers.size(); s++) {
+                                bombers.get(s).draw();
+                            }
+                        }
+                        if(bos.size() > 0) {
+                            for(int s = 0; s< bos.size(); s++) {
+                                drawBomberShot(bos.get(s));
+                            }
+                        }
                         if(ft.size() == 0 && totank >= 1 && bs1 == null && bs2 == null) {
                             Random rrand = new Random();
                             for(int s = 0; s < 12; s++) {
@@ -1271,8 +1483,10 @@ public class Interfire implements KeyListener {
                     }
                 }
 
-                g.setColor(Color.GREEN);
-                g.fillRect(0, 0, 1100, 750);
+                try {
+                    Image iii = ImageIO.read(getClass().getResourceAsStream("def.png"));
+                    g.drawImage(iii, 0, 0, 1100, 750, null);
+                } catch(Exception e) {}
 
                 g.setColor(Color.white);
 
@@ -1348,7 +1562,7 @@ public class Interfire implements KeyListener {
         if((powerUp == 0 || powerUp == 1) && powerUpKind.equals("red")) {
             lasers.add(b);
         }
-        else {
+        else if(powerUpKind.equals("red")) {
             lasers.add(b);
 
             if(powerUp == 2) {
@@ -1369,7 +1583,7 @@ public class Interfire implements KeyListener {
                 b.y = globals.i - 10;
                 b.powerUpRedMove = -3;
                 lasers.add(b);
-            } else {
+            } else if(powerUp == 3) {
                 
                 b = new Bullet(lasers);
                 b.x = globals.xx + 11;
@@ -1398,6 +1612,96 @@ public class Interfire implements KeyListener {
                 b.x = globals.xx + 51;
                 b.y = globals.i - 10;
                 b.powerUpRedMove = -3;
+                lasers.add(b);
+            } else if(powerUp == 4) {
+                
+                b = new Bullet(lasers);
+                b.x = globals.xx - 11;
+                b.y = globals.i - 10;
+                b.powerUpRedMove = -3;
+                lasers.add(b);
+
+                b = new Bullet(lasers);
+                b.x = globals.xx + 11;
+                b.y = globals.i - 10;
+                b.powerUpRedMove = -3;
+                lasers.add(b);
+
+                b = new Bullet(lasers);
+                b.x = globals.xx + 31;
+                b.y = globals.i - 10;
+                lasers.add(b);
+
+                b = new Bullet(lasers);
+                b.x = globals.xx + 21;
+                b.y = globals.i - 10;
+                b.powerUpRedMove = -3;
+                lasers.add(b);
+
+                b = new Bullet(lasers);
+                b.x = globals.xx + 41;
+                b.y = globals.i - 10;
+                b.powerUpRedMove = -3;
+                lasers.add(b);
+                
+                b = new Bullet(lasers);
+                b.x = globals.xx + 51;
+                b.y = globals.i - 10;
+                b.powerUpRedMove = -3;
+                lasers.add(b);
+
+                b = new Bullet(lasers);
+                b.x = globals.xx + 71;
+                b.y = globals.i - 10;
+                b.powerUpRedMove = -3;
+                lasers.add(b);
+            }
+        }
+        else if(powerUpKind.equals("magenta")) {
+            lasers.add(b);
+
+            if(powerUp == 1) {
+
+                b = new Bullet(lasers);
+                b.x = globals.xx + 31;
+                b.y = globals.i - 10;
+                lasers.add(b);
+
+                b = new Bullet(lasers);
+                b.x = globals.xx + 31;
+                b.y = globals.i - 30;
+                b.powerUpMagentaMove = -5;
+                lasers.add(b);
+
+                b = new Bullet(lasers);
+                b.x = globals.xx + 31;
+                b.y = globals.i - 50;
+                b.powerUpMagentaMove = -5;
+                lasers.add(b);
+            }
+            else if(powerUp == 2) {
+
+                b = new Bullet(lasers);
+                b.x = globals.xx + 31;
+                b.y = globals.i - 10;
+                lasers.add(b);
+
+                b = new Bullet(lasers);
+                b.x = globals.xx + 31;
+                b.y = globals.i - 30;
+                b.powerUpMagentaMove = -5;
+                lasers.add(b);
+
+                b = new Bullet(lasers);
+                b.x = globals.xx + 31;
+                b.y = globals.i - 50;
+                b.powerUpMagentaMove = -5;
+                lasers.add(b);
+
+                b = new Bullet(lasers);
+                b.x = globals.xx + 31;
+                b.y = globals.i - 70;
+                b.powerUpMagentaMove = -5;
                 lasers.add(b);
             }
         }
@@ -1484,6 +1788,22 @@ public class Interfire implements KeyListener {
         }
     }
     
+    BufferedImage bomShotImg = null;
+    
+    public void drawBomberShot(BomberShot boms) {
+        if(g == null) {
+            g = p.getGraphics();
+        }
+        if(bomShotImg == null) {
+            try {
+                bomShotImg = ImageIO.read(getClass().getResourceAsStream("energy.png"));
+            } catch(Exception e) {
+
+            }
+        }
+        g.drawImage(bomShotImg, boms.x, boms.y, 20, 20, null);
+    }
+
     public void drawFlatTank() {
         if(g == null) {
             g = p.getGraphics();
