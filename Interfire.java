@@ -1614,8 +1614,11 @@ public class Interfire implements KeyListener {
                         drawField();
                         if(bombers.size() > 0) {
                             for(int s = 0; s< bombers.size(); s++) {
-                                
+                                int v = rand.nextInt(10);
                                 bombers.get(s).draw();
+                                if(v == 0) {
+                                    bombers.get(s).shoot();
+                                }
                             }
                         }
                         if(bos.size() > 0) {
@@ -1626,6 +1629,7 @@ public class Interfire implements KeyListener {
                                         try {
                                             Thread.sleep(100);
                                         } catch(Exception e) {}
+                                        b.move();
                                         if(b.hj < 300)
                                             b.hj+=40;
                                     }
@@ -2099,12 +2103,12 @@ public class Interfire implements KeyListener {
         }
         if(bomShotImg == null) {
             try {
-                bomShotImg = ImageIO.read(getClass().getResourceAsStream("energy.png"));
+                bomShotImg = ImageIO.read(getClass().getResourceAsStream("missileboss1.png"));
             } catch(Exception e) {
 
             }
         }
-        g.drawImage(bomShotImg, boms.x, boms.y, 20+boms.hj, 20+boms.hj, null);
+        g.drawImage(bomShotImg, boms.x, boms.y, 20, 40, null);
     }
 
     public void drawFlatTank() {
