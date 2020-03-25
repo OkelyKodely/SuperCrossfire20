@@ -1,37 +1,29 @@
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 import javax.imageio.ImageIO;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRootPane;
+import javax.sound.sampled.*;
+import javax.swing.*;
 
 public class Interfire implements KeyListener {
    
+    private BufferedImage bimg = null;
+    
+    private ArrayList<Bomber> bombers = new ArrayList<>();
+
+    private ArrayList<BomberShot> bos = new ArrayList<>();
+
+    private BufferedImage bomShotImg = null;
+    
+    private int hj = 0;
+    
+    private JPanel jp = new JPanel();
+
+    private JButton b = new JButton();
+
     private BufferedImage cloudImg = null;
 
     private BufferedImage cloud2Img = null;
@@ -163,9 +155,6 @@ public class Interfire implements KeyListener {
     private String powerUpKind = "red";
     
     public Interfire() {
-        
-        addSound();
-        
         JFrame jj = new JFrame();
         jj.setUndecorated(true);
         jj.getRootPane().setWindowDecorationStyle(JRootPane.NONE);
@@ -220,6 +209,7 @@ public class Interfire implements KeyListener {
         }
         g.drawImage(img, 250, 250, 100, 100, null);
         try {
+            addSound();
             Thread.sleep(10000);
             jj.dispose();
         } catch(Exception e) {
@@ -230,42 +220,74 @@ public class Interfire implements KeyListener {
         
         j.requestFocus();
     }
-
-    private void menu() {
-        Thread aa = new Thread() {
-            public void run() {
-                setGui();
-                if(g == null) {
-                    g = p.getGraphics();
-                    try {
-                        Image iii = ImageIO.read(getClass().getResourceAsStream("def.png"));
-                        g.drawImage(iii, 0, 0, 1100, 750, null);
-                    } catch(Exception e) {}
-                    
-                    g.setColor(Color.white);
-                    
-                    g.setFont(new Font("arial",Font.BOLD,30));
-                    g.drawString("Super Crossfire 20", 10, 50);
-                            
-                    g.setFont(new Font("arial",Font.BOLD,15));
-                    g.drawString("> PLAY NEW GAME", 10, 100);
-                    g.drawString("Exit Game", 10, 150);
-
-                    BufferedImage boss1Img = null;
-                    if(boss1Img == null) {
-                        try {
-                            boss1Img = ImageIO.read(getClass().getResourceAsStream("boss1b.png"));
-                            g.drawImage(boss1Img, 300, 300, null);
-                        } catch(Exception e) {
-
-                        }
-                    }
-                }
-            }
-        };
-        aa.start();
-    }
     
+    class Boss2 {
+        int x, y;
+        int life = 11;
+        Random rr = new Random();
+        public void shoot() {
+            
+            int v = rr.nextInt(250);
+            Boss1Bullet eb = new Boss1Bullet();
+            eb.x = this.x + 26 + 51 + v;
+            eb.y = this.y + 90 + 60;
+            bs1bullets.add(eb);
+            eb = new Boss1Bullet();
+            eb.x = this.x + 36 + 51 + v;
+            eb.y = this.y + 90 + 60;
+            bs1bullets.add(eb);
+            eb = new Boss1Bullet();
+            eb.x = this.x + 26 + 51 + v;
+            eb.y = this.y + 50 + 60;
+            bs1bullets.add(eb);
+            eb = new Boss1Bullet();
+            eb.x = this.x + 36 + 51 + v;
+            eb.y = this.y + 50 + 60;
+            bs1bullets.add(eb);
+            eb = new Boss1Bullet();
+            eb.x = this.x + 26 + 51 + v;
+            eb.y = this.y + 10 + 60;
+            bs1bullets.add(eb);
+            eb = new Boss1Bullet();
+            eb.x = this.x + 36 + 51 + v;
+            eb.y = this.y + 10 + 60;
+            bs1bullets.add(eb);
+        }
+    }
+
+    class Boss1 {
+        int x, y;
+        int life = 10;
+        Random rr = new Random();
+        public void shoot() {
+            int v = rr.nextInt(250);
+            Boss1Bullet eb = new Boss1Bullet();
+            eb.x = this.x + 26 + 51 + v;
+            eb.y = this.y + 90 + 60;
+            bs1bullets.add(eb);
+            eb = new Boss1Bullet();
+            eb.x = this.x + 36 + 51 + v;
+            eb.y = this.y + 90 + 60;
+            bs1bullets.add(eb);
+            eb = new Boss1Bullet();
+            eb.x = this.x + 26 + 51 + v;
+            eb.y = this.y + 50 + 60;
+            bs1bullets.add(eb);
+            eb = new Boss1Bullet();
+            eb.x = this.x + 36 + 51 + v;
+            eb.y = this.y + 50 + 60;
+            bs1bullets.add(eb);
+            eb = new Boss1Bullet();
+            eb.x = this.x + 26 + 51 + v;
+            eb.y = this.y + 10 + 60;
+            bs1bullets.add(eb);
+            eb = new Boss1Bullet();
+            eb.x = this.x + 36 + 51 + v;
+            eb.y = this.y + 10 + 60;
+            bs1bullets.add(eb);
+        }
+    }
+
     class FlatTank {
         int x, y;
         int q;
@@ -322,6 +344,239 @@ public class Interfire implements KeyListener {
         }
     }
     
+    class RedPowerUp {
+        int x, y;
+        private void draw() {
+            if(g == null) {
+                g = p.getGraphics();
+            }
+            g.setColor(Color.red);
+            
+            g.fillOval(x, y, 40, 40);
+            
+            g.setColor(Color.white);
+            g.setFont(new Font("arial", Font.PLAIN, 12));
+            g.drawString("Red", x, y);
+        }
+    }
+    
+    class MagentaPowerUp {
+        int x, y;
+        private void draw() {
+            if(g == null) {
+                g = p.getGraphics();
+            }
+            g.setColor(Color.magenta);
+            
+            g.fillOval(x, y, 40, 40);
+            
+            g.setColor(Color.white);
+            g.setFont(new Font("arial", Font.PLAIN, 12));
+            g.drawString("Magenta", x, y);
+        }
+    }
+
+    class Cloud2 {
+        int x, y;
+    }
+    
+    class Cloud {
+        int x, y;
+    }
+    
+    class Explode {
+        int x, y;
+        int explo = 0;
+    }
+
+    class BomberShot {
+        int x, y;
+        int xm = 0;
+        int ym = 0;
+        int hj = 0;
+        void move() {
+            y += 10;
+        }
+    }
+    
+    class Bomber {
+        int x, y;
+        void draw() {
+            if(g == null) {
+                g = p.getGraphics();
+            }
+            if(bimg == null) {
+                try {
+                    bimg = ImageIO.read(getClass().getResourceAsStream("bomber.png"));
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            g.drawImage(bimg, x, y, 200, 80, null);
+        }
+        void shoot() {
+            int xi = globals.xx - x;
+            int yi = globals.i - y;
+            double xhf = ((double)xi/(double)yi)*3.0;
+            long yyu = Math.round(xhf);
+            long xxu = 3l;
+            BomberShot bs = new BomberShot();
+            bs.x = this.x;
+            bs.y = this.y;
+            bs.xm = (int)yyu;
+            bs.ym = (int)xxu;
+            bos.add(bs);
+        }
+    }
+    
+    class EnemyJet {
+        int x, y;
+        public void move() {
+            if(start) {
+                start = false;
+                Random rd = new Random();
+                q = rd.nextInt(3);
+            }
+            Random rand = new Random();
+            int v = 100 + rand.nextInt(200);
+            int w = 1 + rand.nextInt(2);
+            int kk = rand.nextInt(10);
+            globals.steps++;
+            if(globals.steps % 20 == 1) {
+                Random rd = new Random();
+                q = rd.nextInt(3);
+            }
+            if(kk == 0) {
+                q = 2;
+            }
+            if(q == 0) {
+                if(globals.xx > this.x + w*v) {
+                    boolean pass = true;
+                    for(int z=0; z<ee.size(); z++) {
+                        if(ee.get(z).x > this.x+5 && ee.get(z).x+80 < this.x+5 &&
+                           ee.get(z).y > this.y && ee.get(z).y+100 < this.y) {
+                            pass = false;
+                        }
+                    }
+                    if(pass)
+                        this.x += 5;
+                }
+                else if(globals.xx < this.x + w*v) {
+                    boolean pass = true;
+                    for(int z=0; z<ee.size(); z++) {
+                        if(ee.get(z).x > this.x+5 && ee.get(z).x+80 < this.x+5 &&
+                           ee.get(z).y > this.y && ee.get(z).y+100 < this.y) {
+                            pass = false;
+                        }
+                    }
+                    if(pass)
+                        this.x -= 5;
+                }
+            }
+            else if(q == 1) {
+                if(globals.xx + w*v > this.x)
+                    this.x += 5;
+                else if(globals.xx + w*v < this.x)
+                    this.x -= 5;
+            }
+            else if(q == 2) {
+                if(globals.xx > this.x)
+                    this.x += 3;
+                else if(globals.xx < this.x)
+                    this.x -= 3;
+                int kkk = rand.nextInt(10) - rand.nextInt(10);
+                this.x += kkk;
+            }
+        }
+        public void shoot() {
+            EnemyBullet eb = new EnemyBullet(shots);
+            eb.x = this.x + 26;
+            eb.y = this.y + 70;
+            shots.add(eb);
+        }
+    }
+    
+    class Tank {
+        int x, y;
+        int life = 130;
+        String powerUpK = "red";
+        public void shoot() {
+            Boss1Bullet eb = new Boss1Bullet();
+            eb.x = this.x + 26 + 51;
+            eb.y = this.y + 90 + 60;
+            tk2bullets.add(eb);
+            eb = new Boss1Bullet();
+            eb.x = this.x + 36 + 51;
+            eb.y = this.y + 90 + 60;
+            tk2bullets.add(eb);
+            eb = new Boss1Bullet();
+            eb.x = this.x + 26 + 51;
+            eb.y = this.y + 50 + 60;
+            tk2bullets.add(eb);
+            eb = new Boss1Bullet();
+            eb.x = this.x + 36 + 51;
+            eb.y = this.y + 50 + 60;
+            tk2bullets.add(eb);
+            eb = new Boss1Bullet();
+            eb.x = this.x + 26 + 51;
+            eb.y = this.y + 10 + 60;
+            tk2bullets.add(eb);
+            eb = new Boss1Bullet();
+            eb.x = this.x + 36 + 51;
+            eb.y = this.y + 10 + 60;
+            tk2bullets.add(eb);
+        }
+    }
+
+    class Boss1Bullet {
+        int x, y;
+        private void move() {
+            y+=5;
+        }
+    }
+    
+    class Boss2Bullet {
+        int x, y;
+        private void move() {
+            y+=5;
+        }
+    }
+
+    public void menu() {
+        Thread aa = new Thread() {
+            public void run() {
+                setGui();
+                if(g == null) {
+                    g = p.getGraphics();
+                    try {
+                        Image iii = ImageIO.read(getClass().getResourceAsStream("def.png"));
+                        g.drawImage(iii, 0, 0, 1100, 750, null);
+                    } catch(Exception e) {}
+                    
+                    g.setColor(Color.white);
+                    
+                    g.setFont(new Font("arial",Font.BOLD,30));
+                    g.drawString("Super Crossfire 20", 10, 50);
+                            
+                    g.setFont(new Font("arial",Font.BOLD,15));
+                    g.drawString("> PLAY NEW GAME", 10, 100);
+                    g.drawString("Exit Game", 10, 150);
+
+                    BufferedImage boss1Img = null;
+                    if(boss1Img == null) {
+                        try {
+                            boss1Img = ImageIO.read(getClass().getResourceAsStream("boss1b.png"));
+                            g.drawImage(boss1Img, 300, 300, null);
+                        } catch(Exception e) {
+
+                        }
+                    }
+                }
+            }
+        };
+        aa.start();
+    }
+
     public void addSound() {
         try {
             File audioFile = new File("theme.wav");
@@ -416,46 +671,6 @@ public class Interfire implements KeyListener {
         t.start();
     }
 
-    class RedPowerUp {
-        int x, y;
-        private void draw() {
-            if(g == null) {
-                g = p.getGraphics();
-            }
-            g.setColor(Color.red);
-            
-            g.fillOval(x, y, 40, 40);
-            
-            g.setColor(Color.white);
-            g.setFont(new Font("arial", Font.PLAIN, 12));
-            g.drawString("Red", x, y);
-        }
-    }
-    
-    class MagentaPowerUp {
-        int x, y;
-        private void draw() {
-            if(g == null) {
-                g = p.getGraphics();
-            }
-            g.setColor(Color.magenta);
-            
-            g.fillOval(x, y, 40, 40);
-            
-            g.setColor(Color.white);
-            g.setFont(new Font("arial", Font.PLAIN, 12));
-            g.drawString("Magenta", x, y);
-        }
-    }
-
-    class Cloud2 {
-        int x, y;
-    }
-    
-    class Cloud {
-        int x, y;
-    }
-    
     public void initClouds() {
         int f = 1;
         for(int x=0; x<f; x++) {
@@ -488,10 +703,6 @@ public class Interfire implements KeyListener {
                     powerUp = 3;
             }
             powerUpKind = "magenta";
-//            if(!powerUpKind.equals("magenta")) {
-//                powerUpKind = "red";
-//                powerUp = 1;
-//            }
             return true;
         }
         return false;
@@ -554,11 +765,6 @@ public class Interfire implements KeyListener {
         } catch(Exception npe) {
             
         }
-    }
-
-    class Explode {
-        int x, y;
-        int explo = 0;
     }
     
     private void checkBomsShot() {
@@ -676,54 +882,6 @@ public class Interfire implements KeyListener {
             }
         }
     }
-    
-    class BomberShot {
-        int x, y;
-        int xm = 0;
-        int ym = 0;
-        int hj = 0;
-        void move() {
-//            x += (double)xm/(double)2;
-//            y += (double)ym/(double)2;
-            y += 10;
-        }
-    }
-    
-    ArrayList<BomberShot> bos = new ArrayList<>();
-    
-    class Bomber {
-        int x, y;
-        void draw() {
-            if(g == null) {
-                g = p.getGraphics();
-            }
-            if(bimg == null) {
-                try {
-                    bimg = ImageIO.read(getClass().getResourceAsStream("bomber.png"));
-                } catch(Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            g.drawImage(bimg, x, y, 200, 80, null);
-        }
-        void shoot() {
-            int xi = globals.xx - x;
-            int yi = globals.i - y;
-            double xhf = ((double)xi/(double)yi)*3.0;
-            long yyu = Math.round(xhf);
-            long xxu = 3l;
-            BomberShot bs = new BomberShot();
-            bs.x = this.x;
-            bs.y = this.y;
-            bs.xm = (int)yyu;
-            bs.ym = (int)xxu;
-            bos.add(bs);
-        }
-    }
-    
-    BufferedImage bimg = null;
-    
-    ArrayList<Bomber> bombers = new ArrayList<>();
     
     private void checkForBoss2Shot() {
         for(int ii=0; ii<lasers.size(); ii++) {
@@ -1077,22 +1235,8 @@ public class Interfire implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
     }
-    
-    class Boss1Bullet {
-        int x, y;
-        private void move() {
-            y+=5;
-        }
-    }
-    
-    class Boss2Bullet {
-        int x, y;
-        private void move() {
-            y+=5;
-        }
-    }
 
-    public void moveFtShots(ArrayList<Boss1Bullet> tk2bullets) {
+    private void moveFtShots(ArrayList<Boss1Bullet> tk2bullets) {
         for(int i=0; i<tk2bullets.size(); i++) {
             tk2bullets.get(i).move();
         }
@@ -1154,105 +1298,6 @@ public class Interfire implements KeyListener {
             g.setColor(Color.white);
             g.setFont(new Font("arial", Font.PLAIN, 12));
             g.drawString("?", tk2.x, tk2.y);
-        }
-    }
-    
-    public class EnemyJet {
-        int x, y;
-        public void move() {
-            if(start) {
-                start = false;
-                Random rd = new Random();
-                q = rd.nextInt(3);
-            }
-            Random rand = new Random();
-            int v = 100 + rand.nextInt(200);
-            int w = 1 + rand.nextInt(2);
-            int kk = rand.nextInt(10);
-            globals.steps++;
-            if(globals.steps % 20 == 1) {
-                Random rd = new Random();
-                q = rd.nextInt(3);
-            }
-            if(kk == 0) {
-                q = 2;
-            }
-            if(q == 0) {
-                if(globals.xx > this.x + w*v) {
-                    boolean pass = true;
-                    for(int z=0; z<ee.size(); z++) {
-                        if(ee.get(z).x > this.x+5 && ee.get(z).x+80 < this.x+5 &&
-                           ee.get(z).y > this.y && ee.get(z).y+100 < this.y) {
-                            pass = false;
-                        }
-                    }
-                    if(pass)
-                        this.x += 5;
-                }
-                else if(globals.xx < this.x + w*v) {
-                    boolean pass = true;
-                    for(int z=0; z<ee.size(); z++) {
-                        if(ee.get(z).x > this.x+5 && ee.get(z).x+80 < this.x+5 &&
-                           ee.get(z).y > this.y && ee.get(z).y+100 < this.y) {
-                            pass = false;
-                        }
-                    }
-                    if(pass)
-                        this.x -= 5;
-                }
-            }
-            else if(q == 1) {
-                if(globals.xx + w*v > this.x)
-                    this.x += 5;
-                else if(globals.xx + w*v < this.x)
-                    this.x -= 5;
-            }
-            else if(q == 2) {
-                if(globals.xx > this.x)
-                    this.x += 3;
-                else if(globals.xx < this.x)
-                    this.x -= 3;
-                int kkk = rand.nextInt(10) - rand.nextInt(10);
-                this.x += kkk;
-            }
-        }
-        public void shoot() {
-            EnemyBullet eb = new EnemyBullet(shots);
-            eb.x = this.x + 26;
-            eb.y = this.y + 70;
-            shots.add(eb);
-        }
-    }
-    
-    class Tank {
-        int x, y;
-        int life = 130;
-        String powerUpK = "red";
-        public void shoot() {
-            Boss1Bullet eb = new Boss1Bullet();
-            eb.x = this.x + 26 + 51;
-            eb.y = this.y + 90 + 60;
-            tk2bullets.add(eb);
-            eb = new Boss1Bullet();
-            eb.x = this.x + 36 + 51;
-            eb.y = this.y + 90 + 60;
-            tk2bullets.add(eb);
-            eb = new Boss1Bullet();
-            eb.x = this.x + 26 + 51;
-            eb.y = this.y + 50 + 60;
-            tk2bullets.add(eb);
-            eb = new Boss1Bullet();
-            eb.x = this.x + 36 + 51;
-            eb.y = this.y + 50 + 60;
-            tk2bullets.add(eb);
-            eb = new Boss1Bullet();
-            eb.x = this.x + 26 + 51;
-            eb.y = this.y + 10 + 60;
-            tk2bullets.add(eb);
-            eb = new Boss1Bullet();
-            eb.x = this.x + 36 + 51;
-            eb.y = this.y + 10 + 60;
-            tk2bullets.add(eb);
         }
     }
     
@@ -1381,10 +1426,6 @@ public class Interfire implements KeyListener {
                         if(bombers.size() > 0) {
                             for(int s = 0; s<bombers.size(); s++) {
                                 bombers.get(s).x -= 20;
-//                                int v = rand.nextInt(20);
-//                                if(v == 0 && bombers.get(s).x > 0) {
-//                                    bombers.get(s).shoot();
-//                                }
                             }
                         }
                         
@@ -1581,7 +1622,7 @@ public class Interfire implements KeyListener {
                                     lasers.get(s).y -= 30;
                                 }
                             }
-                            Thread.sleep(50);
+                            Thread.sleep(70);
                         } catch(Exception e) {
 
                         }
@@ -1612,6 +1653,25 @@ public class Interfire implements KeyListener {
                         }
                         moveFtShots(tk2bullets);
                         drawField();
+                        for(Cloud cloud: clouds) {
+                            cloud.x+=20;
+                        }
+                        for(Cloud2 cloud: clouds2) {
+                            cloud.x-=20;
+                        }
+                        drawClouds();
+                        drawEnemyJet();
+                        drawFlatTank();
+                        if(tk != null) {
+                            drawTank();
+                            moveTk();
+                        }
+                        if(tk2 != null) {
+                            drawTank2();
+                            moveTk2();
+                            drawTank2Bullets();
+                        }
+                        game.drawHeroJet(heroImg);
                         if(bombers.size() > 0) {
                             for(int s = 0; s< bombers.size(); s++) {
                                 int v = rand.nextInt(10);
@@ -1691,18 +1751,6 @@ public class Interfire implements KeyListener {
                             moveBoss2Bullets();
                         }
                         drawTank2Bullets();
-                        drawFlatTank();
-                        game.drawHeroJet(heroImg);
-                        drawEnemyJet();
-                        if(tk != null) {
-                            drawTank();
-                            moveTk();
-                        }
-                        if(tk2 != null) {
-                            drawTank2();
-                            moveTk2();
-                            drawTank2Bullets();
-                        }
                         for(int h=0; h<exs.size(); h++) {
                             checkExplode(exs.get(h));
                             exs.get(h).explo++;
@@ -1714,13 +1762,6 @@ public class Interfire implements KeyListener {
                         }
                         game.drawShots(shots, enemyBulletImg);
                         game.drawLasers(lasers, bulletImg);
-                        for(Cloud cloud: clouds) {
-                            cloud.x+=20;
-                        }
-                        for(Cloud2 cloud: clouds2) {
-                            cloud.x-=20;
-                        }
-                        drawClouds();
                     }
                 }
 
@@ -1795,7 +1836,7 @@ public class Interfire implements KeyListener {
         }
     }
 
-    public void fire(ArrayList<Bullet> lasers) {
+    private void fire(ArrayList<Bullet> lasers) {
         Bullet b = new Bullet(lasers);
         b.x = globals.xx + 27;
         b.y = globals.i - 10;
@@ -2012,7 +2053,7 @@ public class Interfire implements KeyListener {
         }
     }
 
-    public void drawField() {
+    private void drawField() {
         if(g == null) {
             g = p.getGraphics();
         }
@@ -2044,7 +2085,7 @@ public class Interfire implements KeyListener {
             }
         }
         
-        globals.y+=5;
+        globals.y+=1;
 
         if(globals.y < 760) {
             g.drawImage(fieldImg3, 0, globals.y - 760 - 760, 1100, 760, null);
@@ -2059,9 +2100,11 @@ public class Interfire implements KeyListener {
         else if(globals.y >= 1520) {
             globals.y = 0;
         }
+//        g.setColor(Color.white);
+//        g.fillRect(0, 0, 1100, 800);
     }
 
-    public BufferedImage flip(BufferedImage sprite){
+    private BufferedImage flip(BufferedImage sprite){
         BufferedImage img = new BufferedImage(sprite.getWidth(),sprite.getHeight(),BufferedImage.TYPE_INT_ARGB);
         for(int xx = sprite.getWidth()-1;xx>0;xx--){
             for(int yy = 0;yy < sprite.getHeight();yy++){
@@ -2071,21 +2114,19 @@ public class Interfire implements KeyListener {
         return img;
     }
 
-    public void drawEnemyJet() {
+    private void drawEnemyJet() {
         if(g == null) {
             g = p.getGraphics();
         }
-        if(enemyImg == null || 1==1) {
-            try {
-                if(v == 0)
-                    enemyImg = ImageIO.read(getClass().getResourceAsStream("flattank.png"));
-                else if(v == 1)
-                    enemyImg = ImageIO.read(getClass().getResourceAsStream("enemy3.png"));
+        try {
+            if(v == 0)
+                enemyImg = ImageIO.read(getClass().getResourceAsStream("flattank.png"));
+            else if(v == 1)
+                enemyImg = ImageIO.read(getClass().getResourceAsStream("enemy3.png"));
 
-                globals.steps++;
-            } catch(Exception e) {
+            globals.steps++;
+        } catch(Exception e) {
 
-            }
         }
         for(int s = 0; s<12; s++) {
             if(s < ee.size())
@@ -2093,11 +2134,7 @@ public class Interfire implements KeyListener {
         }
     }
     
-    BufferedImage bomShotImg = null;
-    
-    int hj = 0;
-    
-    public void drawBomberShot(BomberShot boms) {
+    private void drawBomberShot(BomberShot boms) {
         if(g == null) {
             g = p.getGraphics();
         }
@@ -2111,7 +2148,7 @@ public class Interfire implements KeyListener {
         g.drawImage(bomShotImg, boms.x, boms.y, 20, 40, null);
     }
 
-    public void drawFlatTank() {
+    private void drawFlatTank() {
         if(g == null) {
             g = p.getGraphics();
         }
@@ -2155,7 +2192,7 @@ public class Interfire implements KeyListener {
         }
     }
 
-    public void checkExplode(Explode ee) {
+    private void checkExplode(Explode ee) {
         if(g == null) {
             g = p.getGraphics();
         }
@@ -2171,7 +2208,7 @@ public class Interfire implements KeyListener {
         explodesound();
     }
     
-    public void drawTank2() {
+    private void drawTank2() {
         if(g == null) {
             g = p.getGraphics();
         }
@@ -2186,74 +2223,7 @@ public class Interfire implements KeyListener {
         g.drawImage(tankImg2, tk2.x, tk2.y, 150, 150, null);
     }
 
-    class Boss2 {
-        int x, y;
-        int life = 11;
-        Random rr = new Random();
-        public void shoot() {
-            
-            int v = rr.nextInt(250);
-            Boss1Bullet eb = new Boss1Bullet();
-            eb.x = this.x + 26 + 51 + v;
-            eb.y = this.y + 90 + 60;
-            bs1bullets.add(eb);
-            eb = new Boss1Bullet();
-            eb.x = this.x + 36 + 51 + v;
-            eb.y = this.y + 90 + 60;
-            bs1bullets.add(eb);
-            eb = new Boss1Bullet();
-            eb.x = this.x + 26 + 51 + v;
-            eb.y = this.y + 50 + 60;
-            bs1bullets.add(eb);
-            eb = new Boss1Bullet();
-            eb.x = this.x + 36 + 51 + v;
-            eb.y = this.y + 50 + 60;
-            bs1bullets.add(eb);
-            eb = new Boss1Bullet();
-            eb.x = this.x + 26 + 51 + v;
-            eb.y = this.y + 10 + 60;
-            bs1bullets.add(eb);
-            eb = new Boss1Bullet();
-            eb.x = this.x + 36 + 51 + v;
-            eb.y = this.y + 10 + 60;
-            bs1bullets.add(eb);
-        }
-    }
-
-    class Boss1 {
-        int x, y;
-        int life = 10;
-        Random rr = new Random();
-        public void shoot() {
-            int v = rr.nextInt(250);
-            Boss1Bullet eb = new Boss1Bullet();
-            eb.x = this.x + 26 + 51 + v;
-            eb.y = this.y + 90 + 60;
-            bs1bullets.add(eb);
-            eb = new Boss1Bullet();
-            eb.x = this.x + 36 + 51 + v;
-            eb.y = this.y + 90 + 60;
-            bs1bullets.add(eb);
-            eb = new Boss1Bullet();
-            eb.x = this.x + 26 + 51 + v;
-            eb.y = this.y + 50 + 60;
-            bs1bullets.add(eb);
-            eb = new Boss1Bullet();
-            eb.x = this.x + 36 + 51 + v;
-            eb.y = this.y + 50 + 60;
-            bs1bullets.add(eb);
-            eb = new Boss1Bullet();
-            eb.x = this.x + 26 + 51 + v;
-            eb.y = this.y + 10 + 60;
-            bs1bullets.add(eb);
-            eb = new Boss1Bullet();
-            eb.x = this.x + 36 + 51 + v;
-            eb.y = this.y + 10 + 60;
-            bs1bullets.add(eb);
-        }
-    }
-    
-    public void drawBoss2Bullet(Boss2Bullet b) {
+    private void drawBoss2Bullet(Boss2Bullet b) {
         if(g == null) {
             g = p.getGraphics();
         }
@@ -2267,7 +2237,7 @@ public class Interfire implements KeyListener {
         g.drawImage(boss2BulletImg, b.x, b.y, 16, 47, null);
     }
     
-    public void drawBoss2() {
+    private void drawBoss2() {
         if(g == null) {
             g = p.getGraphics();
         }
@@ -2282,7 +2252,7 @@ public class Interfire implements KeyListener {
         g.drawImage(boss2Img, bs2.x, bs2.y, 350, 200, null);
     }
 
-    public void drawBoss1Bullet(Boss1Bullet b) {
+    private void drawBoss1Bullet(Boss1Bullet b) {
         if(g == null) {
             g = p.getGraphics();
         }
@@ -2296,7 +2266,7 @@ public class Interfire implements KeyListener {
         g.drawImage(boss1BulletImg, b.x, b.y, 16, 47, null);
     }
     
-    public void drawBoss1() {
+    private void drawBoss1() {
         if(g == null) {
             g = p.getGraphics();
         }
@@ -2310,7 +2280,7 @@ public class Interfire implements KeyListener {
         g.drawImage(boss1Img, bs1.x, bs1.y, 350, 200, null);
     }
     
-    public void drawClouds() {
+    private void drawClouds() {
         for(int i=0; i<clouds.size(); i++) {
             drawCloud(clouds.get(i));
         }
@@ -2318,7 +2288,8 @@ public class Interfire implements KeyListener {
             drawCloud(clouds2.get(i));
         }
     }
-    public void drawCloud(Cloud cloud) {
+
+    private void drawCloud(Cloud cloud) {
         if(g == null) {
             g = p.getGraphics();
         }
@@ -2331,7 +2302,8 @@ public class Interfire implements KeyListener {
         }
         g.drawImage(cloudImg, cloud.x, cloud.y, 200, 110, null);
     }
-    public void drawCloud(Cloud2 cloud) {
+
+    private void drawCloud(Cloud2 cloud) {
         if(g == null) {
             g = p.getGraphics();
         }
@@ -2345,7 +2317,7 @@ public class Interfire implements KeyListener {
         g.drawImage(cloudImg, cloud.x, cloud.y, 200, 110, null);
     }
     
-    public void drawTank2Bullet(Boss1Bullet tb) {
+    private void drawTank2Bullet(Boss1Bullet tb) {
         if(g == null) {
             g = p.getGraphics();
         }
@@ -2359,7 +2331,7 @@ public class Interfire implements KeyListener {
         g.drawImage(tank2BulletImg, tb.x, tb.y, 15, 45, null);
     }
 
-    public void drawTank() {
+    private void drawTank() {
         if(g == null) {
             g = p.getGraphics();
         }
@@ -2373,10 +2345,6 @@ public class Interfire implements KeyListener {
         }
         g.drawImage(tankImg, tk.x, tk.y, 150, 150, null);
     }
-
-    JPanel jp = new JPanel();
-
-    JButton b = new JButton();
 
     private void drawGuiHere() {
         j.setLayout(null);
@@ -2456,11 +2424,7 @@ public class Interfire implements KeyListener {
         drawGuiHere();
     }
     
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
-        // TODO code application logic here
         new Interfire();
     }
 }
